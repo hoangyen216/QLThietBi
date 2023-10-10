@@ -1,0 +1,16 @@
+{
+    "devices": [
+        {
+            "idTB": "1",
+            "hinhAnh": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWuY32whvZYgcaKPo7oabOOvOuByhf2X9bug&usqp=CAU",
+            "tenTB": "Camera",
+            "soLuong": 2
+        },
+        {
+            "idTB": "2",
+            "hinhAnh": "camera2.png",
+            "tenTB": "Camera2",
+            "soLuong": 3
+        }
+    ]
+}
