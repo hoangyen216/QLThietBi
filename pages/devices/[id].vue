@@ -91,8 +91,8 @@ import { UploadFilled } from '@element-plus/icons-vue'
 const route = useRoute();
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
-const ruleForm = ref<Program>()
-// const rules = reactive<FormRules<Program[]>>({
+const ruleForm = ref<Device>()
+// const rules = reactive<FormRules<Device[]>>({
 //   ten: [
 //     { required: true, message: 'Vui lòng nhập tên thiết bị', trigger: 'blur' },
 //     // { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
@@ -140,7 +140,7 @@ const updateForm = async (formEl: FormInstance | undefined) => {
   })
 }
 
-const { data, pending, error } = await useFetch<Program>(`https://65183f73582f58d62d358659.mockapi.io/devices/${route.params.id}`, {
+const { data, pending, error } = await useFetch<Device>(`https://65183f73582f58d62d358659.mockapi.io/devices/${route.params.id}`, {
   method: 'GET',
   headers: { 'Content-Type': 'application/json' },
 })

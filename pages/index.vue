@@ -21,7 +21,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="idTB" width="50" label="Id" />
+                <el-table-column prop="id" width="50" label="Id" />
                 <el-table-column prop="hinhanh" label="Ảnh" align="center">
                     <template #default="scope">
                         <el-image style="height: 40px" :src="scope.row.hinhanh" fit="contain" />
@@ -31,18 +31,13 @@
                 <el-table-column prop="soLuong" label="Số Lượng" />
                 <el-table-column width="250">
                     <template #default="scope">
-                        <!-- <el-space wrap alignment="center">
-                            <el-button @click="navigateTo(`/programs/${scope.row.id}`)">
-                                <Icon name="mdi:pencil" class="mr-2" />Chi tiết
-                            </el-button>
-                        </el-space> -->
                         <el-space wrap alignment="center">
-                            <el-button @click="navigateTo(`/devices/${scope.row.idTB}`)">
+                            <el-button @click="navigateTo(`/devices/${scope.row.id}`)">
                                 <Icon name="mdi:pencil" class="mr-2" />Edit
                             </el-button>
                             <client-only>
                                 <el-popconfirm title="Bạn có chắc muốn xóa?" width="300"
-                                    @confirm="(_) => deleteDevice(scope.row.idTB)">
+                                    @confirm="(_) => deleteDevice(scope.row.id)">
                                     <template #reference>
                                         <el-button type="danger">
                                             <Icon name="mdi:delete" class="mr-2" size="20" />
@@ -60,20 +55,6 @@
             layout="total, sizes, prev, pager, next, jumper" :total="total" class="mt-5" />
     </el-card>
 
-    <client-only>
-        <el-dialog v-model="dialogVisible" title="Thêm thiết bị" :before-close="handleClose" :show-close="false"
-            :center="true">
-            <ProgramCreate ref="addNewRef" />
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="dialogVisible = false">Hủy bỏ</el-button>
-                    <el-button type="primary" @click="submit">
-                        OK
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
-    </client-only>
 </template>
 
 <script setup lang="ts">
@@ -84,8 +65,8 @@ const handleChange = (val: string[]) => {
     console.log(val)
 }
 
-const tableData = ref<Program[]>();
-const multipleSelection = ref<Program[]>([])
+const tableData = ref<Device[]>();
+const multipleSelection = ref<Device[]>([])
 const dialogVisible = ref(false)
 const page = ref(1);
 const pageSize = ref(30);
@@ -110,11 +91,11 @@ const { data, pending } = await useFetch('https://65183f73582f58d62d358659.mocka
 });
 
 watch(data, (x) => {
-    tableData.value = typeof (x) == 'string' ? JSON.parse(x as string) : x as Program[];
+    tableData.value = typeof (x) == 'string' ? JSON.parse(x as string) : x as Device[];
 })
 
 
-function handleSelectionChange(val: Program[]) {
+function handleSelectionChange(val: Device[]) {
     multipleSelection.value = val
 }
 

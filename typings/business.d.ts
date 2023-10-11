@@ -1,7 +1,7 @@
 
 
-interface Program {
-    idTB: string;
+interface Device {
+    id: string;
     ten: string
     tenVietTat: string
     tgnhapKho: string

@@ -6,10 +6,19 @@
             <el-aside width="200px">
                 <el-row class="tac">
                     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
-                        
                         <el-menu-item index="1">
                             <el-icon><icon-menu /></el-icon>
-                            <span @click="showDevice">Danh Sách Thiết Bị </span>
+                            <span>
+                                <NuxtLink to="/" :underline="false">
+                                    Danh Sách Thiết Bị
+                                </NuxtLink>
+                            </span>
+                        </el-menu-item>
+                        <el-menu-item index="2">
+                            <el-icon>
+                                <Document />
+                            </el-icon>
+                            <span>Đăng Ký</span>
                         </el-menu-item>
                         <!-- <el-sub-menu index="2">
                             <template #title>
@@ -36,13 +45,7 @@
                             </el-icon>
                             <span>Navigator Three</span>
                         </el-menu-item> -->
-                        <el-menu-item index="2">
-                            <el-icon>
-                                <setting />
-                            </el-icon>
-                            <span>Đăng Ký</span>
-                        </el-menu-item>
-                    </el-menu>
+                    </el-menu>            
                 </el-row>
             </el-aside>
             <el-container>
@@ -59,8 +62,7 @@
     </div>
 </template>
 
-<!-- <script lang="ts" setup>
-import { ShowDevice } from '#build/components';
+<script lang="ts" setup>
 import {
     Document,
     Menu as IconMenu,
@@ -73,7 +75,5 @@ const handleOpen = (key: string, keyPath: string[]) => {
 const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
-const handleClick = () => {
-    console.log('click')
-}
-</script> -->
+
+</script>
