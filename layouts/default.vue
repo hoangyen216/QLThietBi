@@ -53,11 +53,11 @@
                 <!-- <el-header>Header
 
                 </el-header > -->
-                <el-header>
-                    <el-autocomplete  style="text-align: left" v-model="state2" :fetch-suggestions="querySearch" :trigger-on-focus="false" clearable
-                        class="inline-input w-50" placeholder="Please Input" @select="handleSelect" />
+                <el-header style="text-align: right;">
+                    <!-- <el-autocomplete  style="text-align: left" v-model="state2" :fetch-suggestions="querySearch" :trigger-on-focus="false" clearable
+                        class="inline-input w-50" placeholder="Please Input" @select="handleSelect" /> -->
                     <client-only>
-                        <el-dropdown style="text-align: right;" class="el-dropdown-link" trigger="click"
+                        <el-dropdown  class="el-dropdown-link" trigger="click"
                             @command="handleCommand">
                             <el-space>
                                 <el-avatar :size="40"
