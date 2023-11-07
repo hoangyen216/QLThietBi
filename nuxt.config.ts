@@ -6,7 +6,12 @@ export default defineNuxtConfig({
     '@element-plus/nuxt',
     'nuxt-icon'
   ],
-   
+  runtimeConfig: {
+    apiSecret: '123',
+    public: {
+      baseUrl: process.env.BASE_URL || 'http://localhost:5131/',
+    },
+  },
   elementPlus: { /** Options */ },
 
 })

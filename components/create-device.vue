@@ -1,5 +1,4 @@
 <template>
-  <h2>Thêm Thiết Bị</h2>
   <el-form ref="ruleFormRef" :model="ruleForm" label-width="150px" style="width: 50% " :rules="rules"
     class="demo-ruleForm" :size="formSize" status-icon>
     <el-form-item label="Tên thiết bị" prop="ten">
@@ -8,15 +7,15 @@
     <el-form-item label="Tên viết tắt" prop="tenVietTat">
       <el-input v-model="ruleForm.tenVietTat" />
     </el-form-item>
-    <el-form-item label="Thời gian nhập kho" >
+    <el-form-item label="Thời gian nhập kho">
       <el-col :span="11">
         <el-form-item prop="tgnhapKho">
           <el-date-picker v-model="ruleForm.tgnhapKho" type="date" label="Pick a date" placeholder="Pick a date"
-            style="width: 100%" />
+          value-format="YYYY-MM-DD" style="width: 100%" />
         </el-form-item>
       </el-col>
     </el-form-item>
-    <el-form-item label="Thời gian bảo hành" >
+    <el-form-item label="Thời gian bảo hành">
       <el-col :span="11">
         <el-form-item prop="tgbaoHanh">
           <el-date-picker v-model="ruleForm.tgbaoHanh" type="date" label="Pick a date" style="width: 100%" />
@@ -24,7 +23,7 @@
       </el-col>
 
     </el-form-item>
-    <el-form-item label="Thời gian bảo dưỡng" >
+    <el-form-item label="Thời gian bảo dưỡng">
       <el-col :span="11">
         <el-form-item prop="tgbaoDuong">
           <el-date-picker v-model="ruleForm.tgbaoDuong" type="date" label="Pick a date" style="width: 100%" />
@@ -68,7 +67,7 @@
       <el-input v-model="ruleForm.tinhTrang" />
     </el-form-item>
     <el-form-item label="Số lượng" prop="desc">
-      <el-input-number v-model="ruleForm.soLuong" :min="1" :max="1000" @change="handleChange" />
+      <el-input-number v-model="ruleForm.soLuong" :min="1" :max="1000" />
     </el-form-item>
     <el-form-item label="Mô tả chức năng" prop="desc">
       <el-input v-model="ruleForm.moTaChucNang" type="textarea" />
@@ -76,12 +75,12 @@
     <el-form-item label="Hướng dẫn sử dụng" prop="desc">
       <el-input v-model="ruleForm.huongDanSuDung" type="textarea" />
     </el-form-item>
-    <el-form-item>
+    <!-- <el-form-item>
       <el-button type="primary" @click="submitForm(ruleFormRef)">
         Add Device
-      </el-button>
-      <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-    </el-form-item>
+      </el-button> 
+     <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+    </el-form-item> -->
   </el-form>
 </template>
   
@@ -91,25 +90,21 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules, UploadFile, UploadRawFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 const imageUrl = ref('')
+defineExpose({ submit })
 
+interface Props {
+  edit?: boolean;
+}
 
-// interface RuleForm {
-//   ten: string
-//   tenVietTat: string
-//   tgnhapKho: string
-//   nguoiNhapKho: string
-//   tgbaoHanh: string
-//   tgbaoDuong: string
-//   tinhTrang: string
-//   moTaChucNang: string
-//   soLuong: number
-//   hinhanh: string
-//   huongDanSuDung: string
-// }
+const props = withDefaults(defineProps<Props>(), {
+  edit: false,
+})
 
+const route = useRoute()
 const formSize = ref('default')
+const oldForm = ref<Device>()
 const ruleFormRef = ref<FormInstance>()
-const ruleForm = reactive<Device[]>({
+const ruleForm = ref<Device>({
   ten: '',
   tenVietTat: '',
   nguoiNhapKho: '',
@@ -124,15 +119,16 @@ const ruleForm = reactive<Device[]>({
 
 })
 
-const rules = reactive<FormRules<Device[]>>({
+const rules = reactive<FormRules<Device>>({
   ten: [
     { required: true, message: 'Vui lòng nhập tên thiết bị', trigger: 'blur' },
-    // { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+
   ],
   nguoiNhapKho: [
     { required: true, message: 'Vui lòng nhập tên người nhập kho', trigger: 'blur' }
 
   ],
+
   // tgnhapKho: [
   //   {
   //     type: 'date',
@@ -143,37 +139,69 @@ const rules = reactive<FormRules<Device[]>>({
   // ],
 })
 
-const submitForm = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
-    if (valid) {
-      console.log('submit!')
-      const { data, error, status } = await useFetch('https://65183f73582f58d62d358659.mockapi.io/devices', {
-        method: 'POST',
-        body: ruleForm
-      })
-      if (status.value == 'success') {
-        console.log('submit!')
-      }
-      else if (error.value) {
-        console.error(error.value)
-        ElNotification({
-          title: 'Error',
-          message: error.value.data,
-          type: 'error',
-        })
-      }
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
+if (props.edit) {
+  const id = route.params.id as string;
+  const { data } = await useFetchApi(`/demo/find/${route.params.id}`, {
+    method: 'GET',
+  });
+  if (data.value) {
+    const programDetail = data.value as Device;
+    oldForm.value = programDetail;
+
+    ruleForm.value = programDetail
+
+  }
 }
+
+async function submit(): Promise<boolean> {
+  console.log(ruleFormRef.value)
+  if (!ruleFormRef.value) return false;
+  try {
+    if (! await ruleFormRef.value.validate((valid, fields) => {
+      return valid;
+    })) return false;
+  } catch (error) {
+    return false;
+  }
+
+  // const formData = new FormData();
+  // for (const [k, v] of Object.entries(ruleForm.value)) {
+  //     if (v && k!= 'id')
+  //       formData.append(k, v);
+  //   }
+  const { error, status } = await useFetchApi(`demo/post/${props.edit ? oldForm.value?.id + '/' : ''}`, {
+    method: props.edit ? 'PUT' : 'POST',
+    server: false,
+    body: ruleForm, 
+    watch: false
+  }, false)
+  if (status.value == 'success') {
+    return true;
+  } else if (status.value == 'error') {
+    ElNotification({
+      title: 'Error',
+      message: error.value?.data,
+      type: 'error',
+    })
+  }
+  return false;
+}
+
 
 function handleSuccessUpload(file: UploadFile) {
-  ruleForm.hinhanh = file.raw;
-  imageUrl.value = URL.createObjectURL(file.raw!)
-
+  
+  var reader = new FileReader();
+   reader.readAsDataURL(file.raw);
+   reader.onload = function () {
+     console.log(reader.result);
+     ruleForm.value.hinhanh = reader.result;
+   };
+   reader.onerror = function (error) {
+     console.log('Error: ', error);
+   };
+   
 }
+
 
 function beforeAvatarUpload(rawFile: UploadRawFile): boolean {
   const formats = ['image/jpeg', 'image/png']
@@ -202,37 +230,39 @@ const handleChange = (value: number) => {
   console.log(value)
 }
 </script>
+
 <style scoped>
 .close:hover {
-    --el-text-color: var(--el-color-primary);
+  --el-text-color: var(--el-color-primary);
 }
 
 .avatar-uploader .avatar {
-    width: 400px;
-    height: 178px;
-    display: block;
+  width: 400px;
+  height: 178px;
+  display: block;
 }
 </style>
 
 <style>
 .avatar-uploader .el-upload {
-    border: 1px dashed var(--el-border-color);
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: var(--el-transition-duration-fast);
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
 }
 
 .avatar-uploader .el-upload:hover {
-    border-color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
 }
 
 .el-icon.avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 400px;
-    height: 178px;
-    text-align: center;
+  font-size: 28px;
+  color: #8c939d;
+  width: 400px;
+  height: 178px;
+  text-align: center;
 }
 </style>
+
