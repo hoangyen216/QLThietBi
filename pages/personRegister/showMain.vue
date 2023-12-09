@@ -122,13 +122,15 @@ function showTypeTag(value: string) {
     else
         return '';
 }
+const user = useCookie('user')
 
-const { data, pending } = useFetchApi('pdk/getall', {
+const { data, pending } = useFetchApi('pdk/findByUser', {
     method: 'GET',
     server: false,
     query: {
         page: page,
         pageSize: pageSize,
+        username: user.value
     },
     watch: [
         page,

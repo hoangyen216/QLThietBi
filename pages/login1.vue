@@ -39,7 +39,7 @@ definePageMeta({
     layout: 'layout1'
 })
 
-import { FormInstance } from 'element-plus';
+import type { FormInstance } from 'element-plus';
 import { useAuth } from '~/stores/auth';
 
 useHeadSafe({ title: 'Đăng Nhập' })
