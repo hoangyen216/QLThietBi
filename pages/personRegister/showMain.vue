@@ -11,41 +11,169 @@
 
         </el-space>
         <client-only>
-            <el-table v-loading="pending" ref="multipleTableRef" :data="tableData" style="width: 100%"
-               >
-               
-                <el-table-column prop="hinhanh" label="Ảnh" align="center">
+            <el-table @row-dblclick="doubleClickHandler" v-loading="pending" ref="multipleTableRef" :data="tableData"
+                style="width: 100%">
+                <el-table-column type="index" width="50" label="STT" />>
+                <!-- <el-table-column prop="qrcode" label="QRCODE" align="center">
                     <template #default="scope">
-                        <el-image style="height: 80px" :src="scope.row.hinhanh" fit="contain" />
+                        <el-image style="height: 100px" :src="`data:image/png;base64,${scope.row.qrcode}`" fit="contain">
+                            <template #error>
+                                <div class="image-slot">
+                                    <el-icon><icon-picture /></el-icon>
+                                </div>
+                            </template>
+                        </el-image>
+                    </template>
+                </el-table-column> -->
+                <el-table-column prop="maPdk" label="Mã PDK" />
+                <el-table-column prop="ngayMuon" label="Ngày Mượn">
+                    <template #default="scope">
+                        <el-text class="mx-1">{{ datetimeFormat(scope.row.ngayMuon) }} - {{
+                            datetimeFormat(scope.row.ngayTra)
+                        }} </el-text>
                     </template>
                 </el-table-column>
-                <el-table-column prop="ten" label="Tên Thiết Bị" />
-                <el-table-column prop="soLuong" label="Số Lượng" />
-                <el-table-column prop="trangThai" label="Trạng Thái" />
-                <el-table-column prop="ngayMuon" label="Ngày Mượn" />
-                <el-table-column prop="ngayTra" label="Ngày Trả" />
-               
+
+                <el-table-column prop="tgGhiNhan" label="Thời Gian Ghi Nhận">
+                    <template #default="scope">
+                        <el-text class="mx-1">{{ datetimeFormat1(scope.row.tgGhiNhan) }} </el-text>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column prop="ghiChu" label="Ghi Chú" /> -->
+                <el-table-column width="150" prop="trangThai" label="Trạng Thái" :align="center" :filters="[
+                    { text: 'Chờ duyệt', value: 'Chờ duyệt' },
+                    { text: 'Duyệt', value: 'Duyệt' },
+                    { text: 'Không duyệt', value: 'Không duyệt' },
+                ]" :filter-method="filterTag">
+                    <template #default="scope">
+
+                        <el-button style="padding: 0;" text @click="dialogFormVisible = true">
+                            <el-tag size="large" :type="showTypeTag(scope.row.trangThai)" disable-transitions>{{
+                                scope.row.trangThai
+                            }}</el-tag>
+                        </el-button>
+
+                    </template>
+                </el-table-column>
+
             </el-table>
         </client-only>
-
+        <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 30]" :background=true
+            layout="sizes, prev, pager, next" :total="total" style="margin-top: 25px" />
     </el-card>
+    <client-only>
+        <el-dialog v-model="dialogTableVisible" :modal="false" :append-to-body="true">
+            <!-- <p>{{ dialogModel?.maPdk }}</p> -->
+            <el-image style="height: 100px;" :src="`data:image/png;base64,${dialogModel?.qrcode}`" fit="contain">
+                <template #error>
+                    <div class="image-slot">
+                        <el-icon><icon-picture /></el-icon>
+                    </div>
+                </template>
+            </el-image>
+            <el-table :data="dialogModel?.listCTPDK">
+                <el-table-column property="tenThietBi" label="Tên thiết bị" />
+                <el-table-column property="soLuong" label="Số lượng" />
+                <!-- <el-table-column property="tinhTrangCT" label="Tinh Trang" /> -->
+            </el-table>
+        </el-dialog>
+        
+    </client-only>
 </template>
 <script lang="ts" setup>
-import { reactive,ref } from 'vue'
+import { reactive, ref } from 'vue'
+const dialogFormVisible = ref(false)
+const dialogTableVisible = ref(false)
+const page = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+const reload = ref(0);
+const dialogModel = ref<PDK>()
 
-const tableData = ref<{ten: string,
-    soLuong: number,
-    hinhanh: string,
+interface PDK {
+    listCTPDK: listCTPDK[],
+    maPdk: number,
+    ghiChu: string,
     ngayMuon: string,
     ngayTra: string,
-    trangThai: string}>();
+    trangThai: string,
+    tgGhiNhan: string,
+    qrcode: string
+}
 
-const { data, pending } = useFetch('https://65183f73582f58d62d358659.mockapi.io/showMain/', {
-    method: 'GET',
-});
-if (data.value) {
-    tableData.value = data.value
+interface listCTPDK {
+    tenThietBi: string,
+    soLuong: number,
+    tinhTrangCT: string
 }
 
 
+const tableData = ref<PDK[]>();
+
+const filterTag = (value: string, row: PDK) => {
+    return row.trangThai === value
+}
+
+function showTypeTag(value: string) {
+    if (value == 'Duyệt')
+        return 'success';
+    if (value == 'Từ chối')
+        return 'danger';
+    else
+        return '';
+}
+
+const { data, pending } = useFetchApi('pdk/getall', {
+    method: 'GET',
+    server: false,
+    query: {
+        page: page,
+        pageSize: pageSize,
+    },
+    watch: [
+        page,
+        pageSize,
+        reload,
+    ]
+
+});
+watch(data, (x) => {
+    if (!x)
+        return
+
+    const newData = x as { itemCount: number, data: any };
+    tableData.value = newData?.data;
+    total.value = newData.itemCount;
+
+})
+
+if (data.value) {
+    // tableData.value = data.value as PDK
+    console.log("danh sach phieu dang ky")
+    console.log("ds", data.value)
+}
+
+function doubleClickHandler(row: any, column: any, event: any) {
+    dialogModel.value = row;
+    dialogTableVisible.value = true
+}
+
 </script>
+
+<style scoped>
+.el-button--text {
+    margin-right: 15px;
+}
+
+.el-select {
+    width: 300px;
+}
+
+.el-input {
+    width: 300px;
+}
+
+.dialog-footer button:first-child {
+    margin-right: 10px;
+}
+</style>

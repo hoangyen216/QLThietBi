@@ -1,6 +1,7 @@
 <template>
-    <el-text tag="b" style="font-size: x-large; margin-left: 250px;">Đăng Ký Mượn Thiết Bị </el-text>
-    <!-- <el-form ref="ruleFormRef" :model="modelForm" label-width="150px" style="margin-top: 30px" class="demo-ruleForm"
+    <div class="container text-center">
+        <el-text tag="b" style="font-size: x-large; ">Đăng Ký Mượn Thiết Bị </el-text>
+        <!-- <el-form ref="ruleFormRef" :model="modelForm" label-width="150px" style="margin-top: 30px" class="demo-ruleForm"
         :rules="rules" status-icon>
         <div style="display:flex; flex-direction:row;" v-for="(item) in modelForm.sponsors" >
             <el-form-item label="Tên thiết bị" prop="tenTB">
@@ -44,69 +45,70 @@
             </el-button>
         </el-form-item>
     </el-form> -->
-    <el-form ref="formRef" :model="dynamicValidateForm" label-width="120px" style="margin-top: 30px;">
 
-        <div style="display:flex; flex-direction:row;" v-for="(device, index) in dynamicValidateForm.devices"
-            :key="device.key">
-            <el-form-item :prop="'devices.' + index + '.tenTB'" label="Tên thiết bị" :rules="{
-                required: true,
-                message: 'Vui lòng nhập tên thiết bị',
-                trigger: 'blur',
-            }">
-                <el-input v-model="device.tenTB" />
-            </el-form-item>
-            <el-form-item :prop="'devices.' + index + '.soLuong'" label="SoLuong"
-                :rules="[{ validator: validateSoLuong, trigger: 'blur' }]">
-                <el-input-number v-model="device.soLuong" :min="0" :max="100" controls-position="right" />
-            </el-form-item>
-            <el-form-item>
-                <el-button v-if="index != -1" circle @click.prevent="removeDomain(device)" class="mb-6">
-                    <Icon name="material-symbols:delete" size="20" />
-                </el-button>
-            </el-form-item>
+        <div class="row justify-content-center">
+            <el-form ref="formRef" :model="dynamicValidateForm" label-width="120px" style=" margin-top: 30px" class="form"
+                :rules="rules">
+                <!-- <el-form-item label="ThietBi" prop="thietBi">
+                    <el-select v-model="value" filterable placeholder="Select" style="width: 300px">
+                        <el-option v-for="item in optionss" :key="item.value" :label="item.label" :value="item.value">
+                            <span style="float: left">{{ item.label }}</span>
+                            <span style="
+                            float: right;
+                            color: var(--el-text-color-secondary);
+                            font-size: 13px;
+                            ">{{ item.soLuong }}</span>
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <p>{{ value }}</p> -->
+                <div style="display:flex; flex-direction:row;" v-for="(device, index) in dynamicValidateForm.devices">
+                    <el-form-item :prop="'devices.' + index + '.tenTB'" label="Tên thiết bị" :rules="{
+                        required: true,
+                        message: 'Vui lòng nhập tên thiết bị',
+                        trigger: 'blur',
+                    }">
+                        <el-input v-model="device.tenTB" style="width: 300px" />
+                        <!-- <el-select v-model="device.tenTB" filterable placeholder="Select" style="width: 300px">
+                            <el-option v-for="item in optionss" :key="item.value" :label="item.label" :value="item.value" />
+                        </el-select> -->
+                    </el-form-item>
+                    <el-form-item :prop="'devices.' + index + '.soLuong'" label="SoLuong" label-width="80px"
+                        :rules="[{ validator: validateSoLuong, trigger: 'blur' }]">
+                        <el-input-number v-model="device.soLuong" :min="0" :max="100" controls-position="right" />
+                    </el-form-item>
+
+                    <el-button style="margin-left: 20px;" v-if="index != -1" circle @click.prevent="removeDomain(device)"
+                        class="mb-6">
+                        <Icon name="material-symbols:delete" size="20" />
+                    </el-button>
+                </div>
+                <el-form-item>
+                    <el-button @click="addDomain">
+                        <Icon name="mdi:plus" class="mr-2" size="20" />
+                        Thêm Thiết Bị
+                    </el-button>
+                </el-form-item>
+                <el-form-item label="Ngày mượn" prop="ngayMuon">
+                    <el-col :span="13">
+                        <el-date-picker v-model="dynamicValidateForm.ngayMuon" type="date" label="Pick a date"
+                            placeholder="Pick a date" style="width: 100%" format="DD-MM-YYYY" value-format="YYYY-MM-DD" />
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="Ngày Trả" prop="ngayTra">
+                    <el-col :span="13">
+                        <el-date-picker v-model="dynamicValidateForm.ngayTra" type="date" label="Pick a date"
+                            placeholder="Pick a date" format="DD-MM-YYYY" value-format="YYYY-MM-DD" style="width: 100%" />
+                    </el-col>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm(formRef)">Submit</el-button>
+                    <el-button @click="resetForm(formRef)">Reset</el-button>
+                </el-form-item>
+            </el-form>
         </div>
-        <el-form-item>
-            <el-button @click="addDomain">
-                <Icon name="mdi:plus" class="mr-2" size="20" />
-                Thêm Thiết Bị
-            </el-button>
-        </el-form-item>
-        <el-form-item label="Ngày mượn" prop="ngayMuon" :rules="[
-            {
-                required: true,
-                message: 'Vui lòng chọn ngày mượn ',
-                trigger: 'blur',
-            },
-
-        ]">
-            <el-col :span="13">
-                <el-form-item prop="ngayMuon">
-                    <el-date-picker v-model="dynamicValidateForm.ngayMuon" type="date" label="Pick a date"
-                        placeholder="Pick a date" style="width: 100%" />
-                </el-form-item>
-            </el-col>
-        </el-form-item>
-        <el-form-item label="Ngày Trả" prop="ngayTra" :rules="[
-            {
-                required: true,
-                message: 'Vui lòng chọn ngày trả ',
-                trigger: 'blur',
-            },
-
-        ]">
-            <el-col :span="13">
-                <el-form-item prop="ngayTra">
-                    <el-date-picker v-model="dynamicValidateForm.ngayTra" type="date" label="Pick a date"
-                        placeholder="Pick a date" style="width: 100%" />
-                </el-form-item>
-            </el-col>
-        </el-form-item>
-
-        <el-form-item>
-            <el-button type="primary" @click="submitForm(formRef)">Submit</el-button>
-            <el-button @click="resetForm(formRef)">Reset</el-button>
-        </el-form-item>
-    </el-form>
+    </div>
 </template>
 
  <!-- <script lang="ts" setup >
@@ -152,28 +154,52 @@ const rules = reactive<FormRules>({
 
 
 <script lang="ts" setup>
+
 import { reactive, ref } from 'vue'
-import type { FormInstance } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
+const user = useCookie('user')
+
+
+
+interface Option {
+    value: string,
+    label: string,
+    soLuong: string,
+}
+
+const optionss = ref<Option[]>()
+
+const value = ref('')
+
+const { data, pending } = await useFetchApi('https://65183f73582f58d62d358659.mockapi.io/select', {
+    method: 'GET',
+    server: false,
+});
+optionss.value = data.value as Option[]
+console.log("list", data.value)
+
 
 const formRef = ref<FormInstance>()
-const dynamicValidateForm = reactive<{
-    devices: DomainItem[]
-    ngayMuon: string,
-    ngayTra: string
-}>({
+const dynamicValidateForm = reactive<PhieuDangKy>({
     devices: [
         {
-            key: 1,
+
             tenTB: '',
-            soLuong: '',
+            soLuong: 0
         },
     ],
     ngayMuon: '',
     ngayTra: '',
 })
 
+interface PhieuDangKy {
+    devices: DomainItem[]
+    ngayMuon: string,
+    ngayTra: string
+}
+
 interface DomainItem {
-    key: number
+
     tenTB: string
     soLuong: number
 }
@@ -195,6 +221,30 @@ const addDomain = () => {
     })
 
 }
+const validateNgayTra = (rule: any, value: any, callback: any) => {
+    if (value < dynamicValidateForm.ngayMuon) {
+        callback(new Error('Ngày trả phải lớn hơn ngày mượn'));
+    } else {
+        callback();
+    }
+}
+const rules = reactive<FormRules<PhieuDangKy>>({
+    ngayTra: [
+        { validator: validateNgayTra, trigger: 'blur' },
+        {
+            required: true,
+            message: 'Vui lòng chọn ngày trả ',
+            trigger: 'blur',
+        },
+    ],
+    ngayMuon: [
+        {
+            required: true,
+            message: 'Vui lòng chọn ngày mượn ',
+            trigger: 'blur',
+        },
+    ]
+})
 
 const validateSoLuong = (rule: any, value: any, callback: any) => {
     if (value === null) {
@@ -206,24 +256,25 @@ const validateSoLuong = (rule: any, value: any, callback: any) => {
     }
 }
 
-async function submitForm(formEl: FormInstance | undefined) {
-    if (!formEl) return
-    formEl.validate((valid) => {
-        if (valid) {
-            console.log('submit!')
-        } else {
-            console.log('error submit!')
-            return false
-        }
-    })
-    const { error, status } = await useFetch('https://65183f73582f58d62d358659.mockapi.io/formregister/', {
+async function submitForm() {
+
+    if (!formRef.value) return false;
+    try {
+        if (! await formRef.value.validate((valid, fields) => {
+            return valid;
+        })) return false;
+    } catch (error) {
+        return false;
+    }
+
+    const { error, status } = await useFetchApi('pdk/register', {
         method: 'POST',
         server: false,
         body: {
             devices: dynamicValidateForm.devices,
             ngayMuon: dynamicValidateForm.ngayMuon,
-            ngayTra: dynamicValidateForm.ngayTra
-
+            ngayTra: dynamicValidateForm.ngayTra,
+            userName: user.value
         },
         watch: false
     })
@@ -251,7 +302,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
     formEl.resetFields()
 }
 </script>
-<style>
+<style scoped>
 .device {
     border: 1px solid rgb(201, 199, 199);
     padding: 15px 0 0 35px;
@@ -301,5 +352,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 .sponsor-form .el-button--add {
     margin-top: 20px;
+}
+
+@media (min-width: 992px) {
+    .form {
+        width: 50%;
+    }
 }
 </style>

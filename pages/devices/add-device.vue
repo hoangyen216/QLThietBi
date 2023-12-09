@@ -1,9 +1,12 @@
 <template>
-  <el-text tag="b" style="font-size: x-large; margin-left: 300px; ">Thêm Thiết Bị </el-text>
-  <CreateDevice ref="addNewRef"  style="margin-top: 30px"/>
-  <el-button type="primary" style=" margin-left: 150px; margin-top: 15px;" @click="submitForm()">
-    Add Device
-  </el-button>
+  <div  class="container text-center">
+    <el-text tag="b" style="font-size: x-large;">Thêm Thiết Bị </el-text>
+    <CreateDevice ref="addNewRef" style="margin-top: 30px" />
+    <el-button type="primary" style=" margin-left: 150px; margin-top: 15px;" @click="submitForm()">
+      Add Device
+    </el-button>
+  </div>
+
   <!-- <el-button @click="resetForm(ruleFormRef)">Reset</el-button> -->
 </template>
   

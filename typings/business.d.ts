@@ -3,9 +3,9 @@
 interface Device {
     id?: string;
     ten: string
-    tenVietTat: string | null
-    tgnhapKho?: string
+    tenVietTat: string 
     nguoiNhapKho: string
+    tgnhapKho?: string 
     tgbaoHanh?: string
     tgbaoDuong?: string
     tinhTrang: string

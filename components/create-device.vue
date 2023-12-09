@@ -1,87 +1,84 @@
 <template>
-  <el-form ref="ruleFormRef" :model="ruleForm" label-width="150px" style="width: 50% " :rules="rules"
-    class="demo-ruleForm" :size="formSize" status-icon>
-    <el-form-item label="Tên thiết bị" prop="ten">
-      <el-input v-model="ruleForm.ten" />
-    </el-form-item>
-    <el-form-item label="Tên viết tắt" prop="tenVietTat">
-      <el-input v-model="ruleForm.tenVietTat" />
-    </el-form-item>
-    <el-form-item label="Thời gian nhập kho">
-      <el-col :span="11">
-        <el-form-item prop="tgnhapKho">
-          <el-date-picker v-model="ruleForm.tgnhapKho" type="date" label="Pick a date" placeholder="Pick a date"
-          value-format="YYYY-MM-DD" style="width: 100%" />
+  <div>
+    <div class="row justify-content-center">
+      <el-form ref="ruleFormRef" :model="ruleForm" label-width="155px" :rules="rules" class="demo-ruleForm form"
+        status-icon>
+        <el-form-item label="Tên thiết bị" prop="ten">
+          <el-input v-model="ruleForm.ten" />
         </el-form-item>
-      </el-col>
-    </el-form-item>
-    <el-form-item label="Thời gian bảo hành">
-      <el-col :span="11">
-        <el-form-item prop="tgbaoHanh">
-          <el-date-picker v-model="ruleForm.tgbaoHanh" type="date" label="Pick a date" style="width: 100%" />
+        <el-form-item label="Tên viết tắt" prop="tenVietTat">
+          <el-input v-model="ruleForm.tenVietTat" />
         </el-form-item>
-      </el-col>
+        <el-form-item label="Thời gian nhập kho" prop="tgnhapKho">
+          <el-date-picker v-model="ruleForm.tgnhapKho" value-format="YYYY-MM-DD" type="date" placeholder="Pick a date"
+            format="DD-MM-YYYY" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="Thời gian bảo hành" prop="tgbaoHanh">
+          <el-date-picker value-format="YYYY-MM-DD" v-model="ruleForm.tgbaoHanh" type="date" format="DD-MM-YYYY"
+            style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="Thời gian bảo dưỡng" prop="tgbaoDuong">
+          <el-date-picker value-format="YYYY-MM-DD" v-model="ruleForm.tgbaoDuong" type="date" format="DD-MM-YYYY"
+            style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="Người nhập kho" prop="nguoiNhapKho">
+          <el-input v-model="ruleForm.nguoiNhapKho" />
+        </el-form-item>
 
-    </el-form-item>
-    <el-form-item label="Thời gian bảo dưỡng">
-      <el-col :span="11">
-        <el-form-item prop="tgbaoDuong">
-          <el-date-picker v-model="ruleForm.tgbaoDuong" type="date" label="Pick a date" style="width: 100%" />
-        </el-form-item>
-      </el-col>
-    </el-form-item>
-    <el-form-item label="Người nhập kho" prop="nguoiNhapKho">
-      <el-input v-model="ruleForm.nguoiNhapKho" />
-    </el-form-item>
-    <!-- <el-form-item label="Hình ảnh thiết bị" prop="hinhanh">
-      <el-upload class="upload-demo" drag action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" multiple>
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">
-          Drop file here or <em>click to upload</em>
-        </div>
-      </el-upload>
-    </el-form-item> -->
-
-    <el-form-item label="Hình nền">
-      <div class="avatar-uploader rounded-lg overflow-hidden" v-if="imageUrl">
-        <div class="relative avatar rounded-lg">
-          <el-text class="absolute right-3 z-10 cursor-pointer text-lg close"
-            @click="() => { imageUrl = ''; ruleForm.hinhanh = null }">x</el-text>
-          <img :src="imageUrl" class="avatar object-contain absolute" />
-        </div>
-      </div>
-      <el-upload v-else class="avatar-uploader" :show-file-list="false"
-        :on-success="(_, file) => handleSuccessUpload(file)" :before-upload="beforeAvatarUpload">
-        <el-icon class="avatar-uploader-icon">
-          <Plus />
-        </el-icon>
-        <template #tip>
-          <div class="el-upload__tip">
-            jpg/png file, không quá 2MB
+        <el-form-item label="Hình ảnh">
+          <div class="avatar-uploader img" v-if="imageUrl">
+            <div class="avatar img1">
+              <el-text class=" close1 close" @click="() => { imageUrl = ''; ruleForm.hinhanh = null }">x</el-text>
+              <img :src="imageUrl" class="avatar img2" />
+            </div>
           </div>
-        </template>
-      </el-upload>
-    </el-form-item>
+          <el-upload v-else class="avatar-uploader" :show-file-list="false"
+            :on-success="(_, file) => handleSuccessUpload(file)" :before-upload="beforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />
+            </el-icon>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png file, không quá 2MB
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
 
-    <el-form-item label="Tình trạng thiết bị" prop="tinhTrang">
-      <el-input v-model="ruleForm.tinhTrang" />
-    </el-form-item>
-    <el-form-item label="Số lượng" prop="desc">
-      <el-input-number v-model="ruleForm.soLuong" :min="1" :max="1000" />
-    </el-form-item>
-    <el-form-item label="Mô tả chức năng" prop="desc">
-      <el-input v-model="ruleForm.moTaChucNang" type="textarea" />
-    </el-form-item>
-    <el-form-item label="Hướng dẫn sử dụng" prop="desc">
-      <el-input v-model="ruleForm.huongDanSuDung" type="textarea" />
-    </el-form-item>
-    <!-- <el-form-item>
-      <el-button type="primary" @click="submitForm(ruleFormRef)">
-        Add Device
-      </el-button> 
+        <!-- <el-form-item>
+          <el-upload class="upload-demo" drag :show-file-list="true" :on-success="(_, file) => handleSuccessUpload(file)"
+            :before-upload="beforeAvatarUpload">
+
+            <Icon name="ep:upload-filled" color="gray" style="height: 56px; width: 380px;"><upload-filled /></Icon>
+            <div class="el-upload__text">
+              Drop file here or <em>click to upload</em>
+            </div>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png file, không quá 2MB
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item> -->
+
+        <el-form-item label="Tình trạng thiết bị" prop="tinhTrang">
+          <el-input v-model="ruleForm.tinhTrang" />
+        </el-form-item>
+        <el-form-item label="Số lượng" prop="desc">
+          <el-input-number v-model="ruleForm.soLuong" :min="1" :max="1000" />
+        </el-form-item>
+        <el-form-item label="Mô tả chức năng" prop="desc">
+          <el-input v-model="ruleForm.moTaChucNang" type="textarea" />
+        </el-form-item>
+        <el-form-item label="Hướng dẫn sử dụng" prop="desc">
+          <el-input v-model="ruleForm.huongDanSuDung" type="textarea" />
+        </el-form-item>
+        <!-- <el-form-item>
      <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
     </el-form-item> -->
-  </el-form>
+      </el-form>
+    </div>
+  </div>
 </template>
   
 <script lang="ts" setup >
@@ -101,7 +98,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const route = useRoute()
-const formSize = ref('default')
+
 const oldForm = ref<Device>()
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = ref<Device>({
@@ -119,6 +116,14 @@ const ruleForm = ref<Device>({
 
 })
 
+const validateTGBaoHanh = (rule: any, value: any, callback: any) => {
+  if (value < ruleForm.tgnhapKho) {
+    callback(new Error('Thời gian bảo hành phải lớn hơn thời gian nhập kho'));
+  } else {
+    callback();
+  }
+}
+
 const rules = reactive<FormRules<Device>>({
   ten: [
     { required: true, message: 'Vui lòng nhập tên thiết bị', trigger: 'blur' },
@@ -128,19 +133,41 @@ const rules = reactive<FormRules<Device>>({
     { required: true, message: 'Vui lòng nhập tên người nhập kho', trigger: 'blur' }
 
   ],
+  tinhTrang: [
+    { required: true, message: 'Vui lòng nhập tình trạng thiết bị', trigger: 'blur' }
 
-  // tgnhapKho: [
-  //   {
-  //     type: 'date',
-  //     required: true,
-  //     message: 'Vui lòng chọn ngày',
-  //     trigger: 'change',
-  //   },
-  // ],
+  ],
+  tgnhapKho: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Vui lòng chọn ngày',
+      trigger: 'change',
+    },
+  ],
+  tgbaoHanh: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Vui lòng chọn ngày',
+      trigger: 'change',
+    },
+    {
+      validator: validateTGBaoHanh, trigger: 'blur'
+    },
+  ],
+  tgbaoDuong: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Vui lòng chọn ngày',
+      trigger: 'change',
+    },
+  ],
 })
 
 if (props.edit) {
-  const id = route.params.id as string;
+
   const { data } = await useFetchApi(`/demo/find/${route.params.id}`, {
     method: 'GET',
   });
@@ -154,7 +181,6 @@ if (props.edit) {
 }
 
 async function submit(): Promise<boolean> {
-  console.log(ruleFormRef.value)
   if (!ruleFormRef.value) return false;
   try {
     if (! await ruleFormRef.value.validate((valid, fields) => {
@@ -169,10 +195,10 @@ async function submit(): Promise<boolean> {
   //     if (v && k!= 'id')
   //       formData.append(k, v);
   //   }
-  const { error, status } = await useFetchApi(`demo/post/${props.edit ? oldForm.value?.id + '/' : ''}`, {
+  const { error, status } = await useFetchApi(`demo/post/${props.edit ? oldForm.value?.maTb + '/' : ''}`, {
     method: props.edit ? 'PUT' : 'POST',
     server: false,
-    body: ruleForm, 
+    body: ruleForm,
     watch: false
   }, false)
   if (status.value == 'success') {
@@ -189,17 +215,18 @@ async function submit(): Promise<boolean> {
 
 
 function handleSuccessUpload(file: UploadFile) {
-  
+
   var reader = new FileReader();
-   reader.readAsDataURL(file.raw);
-   reader.onload = function () {
-     console.log(reader.result);
-     ruleForm.value.hinhanh = reader.result;
-   };
-   reader.onerror = function (error) {
-     console.log('Error: ', error);
-   };
-   
+  reader.readAsDataURL(file.raw!);
+  reader.onload = function () {
+    console.log(reader.result);
+    ruleForm.value.hinhanh = reader.result;
+    imageUrl.value = reader.result as any;
+  };
+  reader.onerror = function (error) {
+    console.log('Error: ', error);
+  };
+
 }
 
 
@@ -231,7 +258,31 @@ const handleChange = (value: number) => {
 }
 </script>
 
-<style scoped>
+<style >
+.img {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.img1 {
+  position: relative;
+  border-radius: 0.5rem;
+}
+
+.close1 {
+  position: absolute;
+  right: 0.75rem;
+  z-index: 10;
+  cursor: pointer;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.img2{
+  /* object-fit: contain; */
+  position: absolute;
+}
+
 .close:hover {
   --el-text-color: var(--el-color-primary);
 }
@@ -240,10 +291,9 @@ const handleChange = (value: number) => {
   width: 400px;
   height: 178px;
   display: block;
-}
-</style>
 
-<style>
+}
+
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
@@ -264,5 +314,25 @@ const handleChange = (value: number) => {
   height: 178px;
   text-align: center;
 }
+
+@media (min-width: 992px) {
+  .form {
+    width: 50%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .el-icon.avatar-uploader-icon {
+    width: 180px;
+    height: 150px;
+  }
+  .avatar-uploader .avatar {
+    width: 180px;
+    height: 150px;
+    
+  }
+}
 </style>
+
+
 

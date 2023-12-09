@@ -1,5 +1,5 @@
 import { UseFetchOptions } from 'nuxt/dist/app/composables';
-// import { useAuth } from '~/stores/auth';
+import { useAuth } from '~/stores/auth';
 
 export const useFetchApi = (url: string, options?: UseFetchOptions<object>, noCT?: boolean) => {
     const config = useRuntimeConfig()
@@ -10,6 +10,7 @@ export const useFetchApi = (url: string, options?: UseFetchOptions<object>, noCT
         baseURL: BE_URL,
         ...options,
         async onRequest({ request, options }) {
+            
             const headers = new Headers(options.headers);
             if (!noCT) {
                 headers.set('Content-Type', 'application/json');
@@ -28,8 +29,8 @@ export const useFetchApi = (url: string, options?: UseFetchOptions<object>, noCT
         async onResponseError({ request, response, options }) {
             console.error(response);
             if (response.status == 401) {
-                // const auth = useAuth();
-                // auth.logout();
+                const auth = useAuth();
+                auth.logout();
             }
         },
     });

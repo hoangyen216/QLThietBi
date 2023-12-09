@@ -3,7 +3,7 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <el-aside width="200px" style="height: 620px">
+            <!-- <el-aside width="200px" style="height: 620px">
                 <el-row class="tac" style="height: 620px">
                     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                         <NuxtLink to="/">
@@ -21,45 +21,46 @@
                             </el-icon>
                             <span>Đăng Ký</span>
                         </el-menu-item>
-                        <!-- <el-sub-menu index="2">
-                            <template #title>
-                                <el-icon>
-                                    <location />
-                                </el-icon>
-                                <span>Navigator One</span>
-                            </template>
-                            <el-menu-item-group title="Group One">
-                                <el-menu-item index="1-1">item one</el-menu-item>
-                                <el-menu-item index="1-2">item two</el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group title="Group Two">
-                                <el-menu-item index="1-3">item three</el-menu-item>
-                            </el-menu-item-group>
-                            <el-sub-menu index="1-4">
-                                <template #title>item four</template>
-                                <el-menu-item index="1-4-1">item one</el-menu-item>
-                            </el-sub-menu>
-                        </el-sub-menu> -->
-                        <!-- <el-menu-item index="3" disabled>
-                            <el-icon>
-                                <document />
-                            </el-icon>
-                            <span>Navigator Three</span>
-                        </el-menu-item> -->
+                        
                     </el-menu>
                 </el-row>
-            </el-aside>
+            </el-aside> -->
             <el-container>
-                <!-- <el-header>Header
+                <!-- <el-header style="text-align: right; ">
+                    <el-menu class="el-menu-demo" mode="horizontal">
 
-                </el-header > -->
-                <el-header style="text-align: right;">
-                    <!-- <el-autocomplete  style="text-align: left" v-model="state2" :fetch-suggestions="querySearch" :trigger-on-focus="false" clearable
-                        class="inline-input w-50" placeholder="Please Input" @select="handleSelect" /> -->
+                        <el-menu-item @click="navigateTo('/')" index="1">Danh Sách Thiết Bị</el-menu-item>
+
+                        <el-menu-item @click="navigateTo('/personRegister/showMain')" index="2">Đăng Ký</el-menu-item>
+                    </el-menu>
+                    <div style="display: inline;">
+                        <client-only>
+                            <el-dropdown class="el-dropdown-link" trigger="click" @command="handleCommand">
+                                <el-space>
+                                    <el-avatar :size="40"
+                                        src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+                                    <el-text tag="b">{{ user }}</el-text>
+                                </el-space>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item command="logout">Đăng xuất</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </client-only>
+                    </div>
+
+                </el-header> -->
+
+                <el-header style="display: inline-flex; align-items: center; justify-content: space-between;">
+                    <el-menu  mode="horizontal" style="width: 93%;">
+                        <el-menu-item @click="navigateTo('/')" index="1">Danh Sách Thiết Bị</el-menu-item>
+                        <el-menu-item @click="navigateTo('/personRegister/showMain')" index="2">Đăng Ký</el-menu-item>
+                        <el-menu-item  v-if="role?.includes('Manager')" @click="navigateTo('/viewManager/listPersonRegister')" index="3">Danh Sách PDK</el-menu-item>
+                    </el-menu>
                     <client-only>
-                        <el-dropdown  class="el-dropdown-link" trigger="click"
-                            @command="handleCommand">
-                            <el-space>
+                        <el-dropdown class="el-dropdown-link" trigger="click" @command="handleCommand">
+                            <el-space style="width: max-content">
                                 <el-avatar :size="40"
                                     src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
                                 <el-text tag="b">{{ user }}</el-text>
@@ -71,24 +72,9 @@
                             </template>
                         </el-dropdown>
                     </client-only>
+
                 </el-header>
-                <!-- <el-header style="text-align: right; font-size: 12px">
-                    <div class="toolbar">
-                        <el-dropdown>
-                            <el-icon style="margin-right: 8px; margin-top: 1px">
-                                <setting />
-                            </el-icon>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item>View</el-dropdown-item>
-                                    <el-dropdown-item>Add</el-dropdown-item>
-                                    <el-dropdown-item>Delete</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                        <span>Tom</span>
-                    </div>
-                </el-header> -->
+
                 <el-main>
                     <div>
                         <slot />
@@ -100,6 +86,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useAuth } from '~/stores/auth';
+const auth = useAuth()
+const user = useCookie('user')
+
+const role = useCookie('role').value;
+
 import {
     Document,
     Menu as IconMenu,
@@ -113,4 +105,23 @@ const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
 
+function handleCommand(command: string) {
+    if (command == 'logout') 
+        auth.logout();
+}
+
 </script>
+<style >
+.el-table .cell {
+
+    word-break: break-word !important;
+
+}
+
+.el-dropdown-link {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    right: 20px;
+}
+</style>
