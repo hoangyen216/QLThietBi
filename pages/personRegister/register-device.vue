@@ -51,8 +51,8 @@
                 :rules="rules">
                 <!-- <el-form-item label="ThietBi" prop="thietBi">
                     <el-select v-model="value" filterable placeholder="Select" style="width: 300px">
-                        <el-option v-for="item in optionss" :key="item.value" :label="item.label" :value="item.value">
-                            <span style="float: left">{{ item.label }}</span>
+                        <el-option v-for="item in optionss" :key="item.tenTB" :label="item.tenTB" :value="item.tenTB">
+                            <span style="float: left">{{ item.tenTB }}</span>
                             <span style="
                             float: right;
                             color: var(--el-text-color-secondary);
@@ -68,10 +68,17 @@
                         message: 'Vui lòng nhập tên thiết bị',
                         trigger: 'blur',
                     }">
-                        <el-input v-model="device.tenTB" style="width: 300px" />
-                        <!-- <el-select v-model="device.tenTB" filterable placeholder="Select" style="width: 300px">
-                            <el-option v-for="item in optionss" :key="item.value" :label="item.label" :value="item.value" />
-                        </el-select> -->
+                        <!-- <el-input v-model="device.tenTB" style="width: 300px" /> -->
+                        <el-select v-model="device.tenTB" filterable placeholder="Chọn thiết bị" style="width: 300px">
+                        <el-option v-for="item in optionss" :key="item.tenTB" :label="item.tenTB" :value="item.tenTB">
+                            <span style="float: left">{{ item.tenTB }}</span>
+                            <span style="
+                            float: right;
+                            
+                            font-size: 13px;
+                            ">{{ item.soLuong }}</span>
+                        </el-option>
+                    </el-select>
                     </el-form-item>
                     <el-form-item :prop="'devices.' + index + '.soLuong'" label="SoLuong" label-width="80px"
                         :rules="[{ validator: validateSoLuong, trigger: 'blur' }]">
@@ -84,19 +91,19 @@
                     </el-button>
                 </div>
                 <el-form-item>
-                    <el-button @click="addDomain">
+                    <el-button type="primary" plain @click="addDomain">
                         <Icon name="mdi:plus" class="mr-2" size="20" />
                         Thêm Thiết Bị
                     </el-button>
                 </el-form-item>
-                <el-form-item label="Ngày mượn" prop="ngayMuon">
-                    <el-col :span="13">
+                <el-form-item   label="Ngày mượn" prop="ngayMuon">
+                    <el-col :span="17">
                         <el-date-picker v-model="dynamicValidateForm.ngayMuon" type="date" label="Pick a date"
                             placeholder="Pick a date" style="width: 100%" format="DD-MM-YYYY" value-format="YYYY-MM-DD" />
                     </el-col>
                 </el-form-item>
                 <el-form-item label="Ngày Trả" prop="ngayTra">
-                    <el-col :span="13">
+                    <el-col :span="17">
                         <el-date-picker v-model="dynamicValidateForm.ngayTra" type="date" label="Pick a date"
                             placeholder="Pick a date" format="DD-MM-YYYY" value-format="YYYY-MM-DD" style="width: 100%" />
                     </el-col>
@@ -158,12 +165,11 @@ const rules = reactive<FormRules>({
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 const user = useCookie('user')
-
+useHeadSafe({ title: 'Đăng ký Mượn Thiết Bị' })
 
 
 interface Option {
-    value: string,
-    label: string,
+    tenTB: string,
     soLuong: string,
 }
 
@@ -171,7 +177,7 @@ const optionss = ref<Option[]>()
 
 const value = ref('')
 
-const { data, pending } = await useFetchApi('https://65183f73582f58d62d358659.mockapi.io/select', {
+const { data, pending } = await useFetchApi('pdk/select', {
     method: 'GET',
     server: false,
 });

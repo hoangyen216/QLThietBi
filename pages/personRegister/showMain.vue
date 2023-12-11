@@ -11,20 +11,75 @@
 
         </el-space>
         <client-only>
-            <el-table @row-dblclick="doubleClickHandler" v-loading="pending" ref="multipleTableRef" :data="tableData"
+            <el-table  v-loading="pending" ref="multipleTableRef" :data="tableData"
                 style="width: 100%">
-                <el-table-column type="index" width="50" label="STT" />>
-                <!-- <el-table-column prop="qrcode" label="QRCODE" align="center">
-                    <template #default="scope">
-                        <el-image style="height: 100px" :src="`data:image/png;base64,${scope.row.qrcode}`" fit="contain">
-                            <template #error>
-                                <div class="image-slot">
-                                    <el-icon><icon-picture /></el-icon>
-                                </div>
-                            </template>
-                        </el-image>
+                <el-table-column type="expand">
+                    <template #default="props">
+                        <el-row>
+                            <el-col :span="7">
+
+                            </el-col>
+                            <el-col :span="10">
+                                <!-- <table style="width:100%">
+                                    <tr>
+                                        <th>Tên thiết bị</th>
+                                        <th>Số lượng</th>
+                                    </tr>
+                                    <tr v-for="tb in props.row.listCTPDK">
+                                        <td>{{ tb.tenThietBi }}</td>
+                                        <td>{{ tb.soLuong }}</td>
+                                    </tr>
+                                </table> -->
+                                <el-table border :data="props.row.listCTPDK" style="width: 100%; margin-top: 20px;">
+                                    <el-table-column prop="tenThietBi" label="Tên thiết bị" />
+                                    <el-table-column prop="soLuong" label="Số lượng" />
+                                   
+                                </el-table>
+                            </el-col>
+                            <el-col :span="8">
+
+                            </el-col>
+                        </el-row>
+                        <el-row style="margin-top: 20px; margin-bottom: 20px;">
+
+
+                            <el-col :span="7" style="background-color: white">
+                                
+                            </el-col>
+                            <el-col :span="5" style="background-color: white">
+
+                                <el-space direction="vertical" alignment="left">
+                                    <el-row>
+                                        <el-text class="mx-1" tag="b">MaPDK: </el-text>
+                                        <el-text class="mx-1"> {{ props.row.maPdk }}</el-text>
+                                    </el-row>
+                                    <el-row>
+                                        <el-text class="mx-1 " tag="b">Thời gian ghi nhận: </el-text>
+                                        <el-text class="mx-1"> {{ datetimeFormat1(props.row.tgGhiNhan) }}</el-text>
+                                    </el-row>
+                                    
+
+                                </el-space>
+                            </el-col>
+                            <el-col :span="8" style="background-color: white">
+                                <el-space direction="vertical" alignment="left">
+                                    <el-row>
+                                        <el-text class="mx-1 " tag="b">Ngày Mượn: </el-text>
+                                        <el-text class="mx-1"> {{ datetimeFormat(props.row.ngayMuon) }} - {{
+                                            datetimeFormat(props.row.ngayTra)
+                                        }}</el-text>
+                                    </el-row>
+                                    <el-row>
+                                        <el-text class="mx-1 " tag="b">Trạng thái: </el-text>
+                                        <el-text class="mx-1"> {{ props.row.trangThai }}</el-text>
+                                    </el-row>
+                                   
+                                </el-space>
+                            </el-col>
+                        </el-row>
                     </template>
-                </el-table-column> -->
+                </el-table-column>
+                <el-table-column type="index" width="50" label="STT" />>
                 <el-table-column prop="maPdk" label="Mã PDK" />
                 <el-table-column prop="ngayMuon" label="Ngày Mượn">
                     <template #default="scope">
@@ -44,6 +99,8 @@
                     { text: 'Chờ duyệt', value: 'Chờ duyệt' },
                     { text: 'Duyệt', value: 'Duyệt' },
                     { text: 'Không duyệt', value: 'Không duyệt' },
+                    { text: 'Đã Mượn', value: 'Đã Mượn' },
+                    { text: 'Đã trả', value: 'Đã trả' },
                 ]" :filter-method="filterTag">
                     <template #default="scope">
 
@@ -64,24 +121,25 @@
     <client-only>
         <el-dialog v-model="dialogTableVisible" :modal="false" :append-to-body="true">
             <!-- <p>{{ dialogModel?.maPdk }}</p> -->
-            <el-image style="height: 100px;" :src="`data:image/png;base64,${dialogModel?.qrcode}`" fit="contain">
+            <!-- <el-image style="height: 100px;" :src="`data:image/png;base64,${dialogModel?.qrcode}`" fit="contain">
                 <template #error>
                     <div class="image-slot">
                         <el-icon><icon-picture /></el-icon>
                     </div>
                 </template>
-            </el-image>
+            </el-image> -->
             <el-table :data="dialogModel?.listCTPDK">
                 <el-table-column property="tenThietBi" label="Tên thiết bị" />
                 <el-table-column property="soLuong" label="Số lượng" />
                 <!-- <el-table-column property="tinhTrangCT" label="Tinh Trang" /> -->
             </el-table>
         </el-dialog>
-        
+
     </client-only>
 </template>
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
+useHeadSafe({ title: 'Danh sách Phiếu Đăng Ký' })
 const dialogFormVisible = ref(false)
 const dialogTableVisible = ref(false)
 const page = ref(1);
@@ -117,7 +175,7 @@ const filterTag = (value: string, row: PDK) => {
 function showTypeTag(value: string) {
     if (value == 'Duyệt')
         return 'success';
-    if (value == 'Từ chối')
+    if (value == 'Không Duyệt')
         return 'danger';
     else
         return '';

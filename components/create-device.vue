@@ -204,9 +204,15 @@ async function submit(): Promise<boolean> {
   if (status.value == 'success') {
     return true;
   } else if (status.value == 'error') {
+    // ElNotification({
+    //   title: 'Error',
+    //   message: error.value?.data,
+    //   type: 'error',
+    // })
+    const msg = error.value?.statusCode == 400 ? 'Thiết bị đã có' : error.value?.data
     ElNotification({
-      title: 'Error',
-      message: error.value?.data,
+      title: 'Không thể thêm mới',
+      message: msg,
       type: 'error',
     })
   }
@@ -278,7 +284,7 @@ const handleChange = (value: number) => {
   line-height: 1.75rem;
 }
 
-.img2{
+.img2 {
   /* object-fit: contain; */
   position: absolute;
 }
@@ -326,10 +332,11 @@ const handleChange = (value: number) => {
     width: 180px;
     height: 150px;
   }
+
   .avatar-uploader .avatar {
     width: 180px;
     height: 150px;
-    
+
   }
 }
 </style>

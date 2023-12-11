@@ -1,5 +1,3 @@
-
-
 <template>
     <div class="common-layout">
         <el-container>
@@ -26,37 +24,12 @@
                 </el-row>
             </el-aside> -->
             <el-container>
-                <!-- <el-header style="text-align: right; ">
-                    <el-menu class="el-menu-demo" mode="horizontal">
-
-                        <el-menu-item @click="navigateTo('/')" index="1">Danh Sách Thiết Bị</el-menu-item>
-
-                        <el-menu-item @click="navigateTo('/personRegister/showMain')" index="2">Đăng Ký</el-menu-item>
-                    </el-menu>
-                    <div style="display: inline;">
-                        <client-only>
-                            <el-dropdown class="el-dropdown-link" trigger="click" @command="handleCommand">
-                                <el-space>
-                                    <el-avatar :size="40"
-                                        src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-                                    <el-text tag="b">{{ user }}</el-text>
-                                </el-space>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item command="logout">Đăng xuất</el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
-                        </client-only>
-                    </div>
-
-                </el-header> -->
-
                 <el-header style="display: inline-flex; align-items: center; justify-content: space-between;">
                     <el-menu  mode="horizontal" style="width: 93%;">
                         <el-menu-item @click="navigateTo('/')" index="1">Danh Sách Thiết Bị</el-menu-item>
                         <el-menu-item @click="navigateTo('/personRegister/showMain')" index="2">Đăng Ký</el-menu-item>
-                        <el-menu-item  v-if="role?.includes('Manager')" @click="navigateTo('/viewManager/listPersonRegister')" index="3">Danh Sách PDK</el-menu-item>
+                        <el-menu-item  v-if="role?.includes('Manager')||role?.includes('Admin')" @click="navigateTo('/viewManager/listPersonRegister')" index="3">Danh Sách PDK</el-menu-item>
+                        <el-menu-item  v-if="role?.includes('Manager')||role?.includes('Admin')" @click="navigateTo('/viewManager/listUser')" index="4">Danh Sách Người Dùng</el-menu-item>
                     </el-menu>
                     <client-only>
                         <el-dropdown class="el-dropdown-link" trigger="click" @command="handleCommand">

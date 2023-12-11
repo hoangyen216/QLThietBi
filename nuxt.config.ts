@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiSecret: '123',
     public: {
-      baseUrl: process.env.BASE_URL || 'http://192.168.0.109:5131/',
+      baseUrl: process.env.BASE_URL || 'http://localhost:5131/',
     },
   },
 

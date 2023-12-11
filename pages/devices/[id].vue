@@ -11,7 +11,7 @@
 </template>
 <script lang="ts" setup >
 import { reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+useHeadSafe({ title: 'Chỉnh Sửa Thông Tin Thiết Bị' })
 
 const configure = ref();
 async function updateForm() {

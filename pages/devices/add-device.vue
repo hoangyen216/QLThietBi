@@ -12,43 +12,9 @@
   
 <script lang="ts" setup >
 
-import { reactive, ref } from 'vue'
-import type { FormInstance } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import {  ref } from 'vue'
+useHeadSafe({ title: 'Thêm Thiết Bị' })
 
-const formSize = ref('default')
-const ruleFormRef = ref<FormInstance>()
-const ruleForm = reactive<Device>({
-  ten: '',
-  tenVietTat: '',
-  nguoiNhapKho: '',
-  tgnhapKho: '',
-  tgbaoHanh: '',
-  tgbaoDuong: '',
-  tinhTrang: '',
-  moTaChucNang: '',
-  huongDanSuDung: '',
-  soLuong: 0,
-  hinhanh: undefined,
-
-})
-onMounted(() => {
-  console.log('add')
-})
-
-
-
-
-
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
-}
-
-const options = Array.from({ length: 10000 }).map((_, idx) => ({
-  value: `${idx + 1}`,
-  label: `${idx + 1}`,
-}))
 
 const addNewRef = ref();
 async function submitForm() {

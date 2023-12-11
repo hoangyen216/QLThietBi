@@ -41,12 +41,7 @@ export const useAuth = defineStore('auth', () => {
             role.value = JSON.stringify(userinfo.data.roles) ;
             authenticated.value = true;
 
-            if(userinfo.succeeded){
-                ElNotification({
-                    title: 'Dang Nhap Thanh Cong',
-                    type: 'success',
-                })
-            }
+            
 
         } else if (error.value) {
             const msg = error.value.statusCode == 401 ? 'Tên đăng nhập hoặc mật khẩu không đúng' : error.value.data
@@ -55,9 +50,7 @@ export const useAuth = defineStore('auth', () => {
                 title: 'Error',
                 message: msg,
                 type: 'error',
-            })
-            console.log("er",error.value );
-            
+            })            
         }
     }
 

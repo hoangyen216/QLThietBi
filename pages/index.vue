@@ -24,7 +24,7 @@
 
         </el-space>
         <client-only>
-            <el-table v-loading="pending" ref="multipleTableRef" :data="data1" style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table  ref="multipleTableRef" :data="data1" style="width: 100%" @selection-change="handleSelectionChange">
                 <!-- <el-table-column type="selection" width="55" /> -->
                 <el-table-column type="expand">
                     <template #default="props">
@@ -96,7 +96,7 @@
                 <el-table-column v-if="role?.includes('Manager')" width="150">
                     <template #default="scope">
 
-                        <el-button @click="navigateTo(`/devices/${scope.row.maTb}`)">
+                        <el-button  @click="navigateTo(`/devices/${scope.row.maTb}`)">
                             <Icon name="bx:edit" />
                         </el-button>
                         <client-only>
@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-useHeadSafe({ title: 'Danh sách thiết bị' })
+useHeadSafe({ title: 'Danh Sách Thiết Bị' })
 import { ref } from 'vue'
 
 const activeNames = ref(['1'])
@@ -186,6 +186,9 @@ onMounted(() => {
     getData()
 })
 
+watch(reload, () => {
+    getData()
+})
 
 const data1 = computed(() => {
     return query.value == '' ? tableData.value : filterDevice.value
