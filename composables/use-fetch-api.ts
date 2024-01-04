@@ -1,4 +1,4 @@
-import { UseFetchOptions } from 'nuxt/dist/app/composables';
+import type  { UseFetchOptions } from 'nuxt/dist/app/composables';
 import { useAuth } from '~/stores/auth';
 
 export const useFetchApi = (url: string, options?: UseFetchOptions<object>, noCT?: boolean) => {

@@ -95,7 +95,7 @@
                     </template>
                 </el-table-column>
                 <!-- <el-table-column prop="ghiChu" label="Ghi Chú" /> -->
-                <el-table-column width="150" prop="trangThai" label="Trạng Thái" :align="center" :filters="[
+                <el-table-column width="150" prop="trangThai" label="Trạng Thái" :filters="[
                     { text: 'Chờ duyệt', value: 'Chờ duyệt' },
                     { text: 'Duyệt', value: 'Duyệt' },
                     { text: 'Không duyệt', value: 'Không duyệt' },
@@ -105,7 +105,7 @@
                     <template #default="scope">
 
                         <el-button style="padding: 0;" text @click="dialogFormVisible = true">
-                            <el-tag size="large" :type="showTypeTag(scope.row.trangThai)" disable-transitions>{{
+                            <el-tag style="width: 97px;" size="large" :type="showTypeTag(scope.row.trangThai)" disable-transitions>{{
                                 scope.row.trangThai
                             }}</el-tag>
                         </el-button>

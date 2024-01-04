@@ -14,12 +14,10 @@
             format="DD-MM-YYYY" style="width: 100%" />
         </el-form-item>
         <el-form-item label="Thời gian bảo hành" prop="tgbaoHanh">
-          <el-date-picker value-format="YYYY-MM-DD" v-model="ruleForm.tgbaoHanh" type="date" format="DD-MM-YYYY"
-            style="width: 100%" />
+          <el-input v-model="ruleForm.tgbaoHanh" />
         </el-form-item>
         <el-form-item label="Thời gian bảo dưỡng" prop="tgbaoDuong">
-          <el-date-picker value-format="YYYY-MM-DD" v-model="ruleForm.tgbaoDuong" type="date" format="DD-MM-YYYY"
-            style="width: 100%" />
+          <el-input v-model="ruleForm.tgbaoDuong" />
         </el-form-item>
         <el-form-item label="Người nhập kho" prop="nguoiNhapKho">
           <el-input v-model="ruleForm.nguoiNhapKho" />
@@ -44,23 +42,6 @@
             </template>
           </el-upload>
         </el-form-item>
-
-        <!-- <el-form-item>
-          <el-upload class="upload-demo" drag :show-file-list="true" :on-success="(_, file) => handleSuccessUpload(file)"
-            :before-upload="beforeAvatarUpload">
-
-            <Icon name="ep:upload-filled" color="gray" style="height: 56px; width: 380px;"><upload-filled /></Icon>
-            <div class="el-upload__text">
-              Drop file here or <em>click to upload</em>
-            </div>
-            <template #tip>
-              <div class="el-upload__tip">
-                jpg/png file, không quá 2MB
-              </div>
-            </template>
-          </el-upload>
-        </el-form-item> -->
-
         <el-form-item label="Tình trạng thiết bị" prop="tinhTrang">
           <el-input v-model="ruleForm.tinhTrang" />
         </el-form-item>
@@ -73,9 +54,7 @@
         <el-form-item label="Hướng dẫn sử dụng" prop="desc">
           <el-input v-model="ruleForm.huongDanSuDung" type="textarea" />
         </el-form-item>
-        <!-- <el-form-item>
-     <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-    </el-form-item> -->
+
       </el-form>
     </div>
   </div>
@@ -113,16 +92,10 @@ const ruleForm = ref<Device>({
   huongDanSuDung: '',
   soLuong: 0,
   hinhanh: undefined,
-
+  qrcode: '',
 })
 
-const validateTGBaoHanh = (rule: any, value: any, callback: any) => {
-  if (value < ruleForm.tgnhapKho) {
-    callback(new Error('Thời gian bảo hành phải lớn hơn thời gian nhập kho'));
-  } else {
-    callback();
-  }
-}
+
 
 const rules = reactive<FormRules<Device>>({
   ten: [
@@ -146,23 +119,10 @@ const rules = reactive<FormRules<Device>>({
     },
   ],
   tgbaoHanh: [
-    {
-      type: 'date',
-      required: true,
-      message: 'Vui lòng chọn ngày',
-      trigger: 'change',
-    },
-    {
-      validator: validateTGBaoHanh, trigger: 'blur'
-    },
+  { required: true, message: 'Vui lòng nhập thời gian bảo hành', trigger: 'blur' },
   ],
   tgbaoDuong: [
-    {
-      type: 'date',
-      required: true,
-      message: 'Vui lòng chọn ngày',
-      trigger: 'change',
-    },
+  { required: true, message: 'Vui lòng nhập thời gian bảo dưỡng', trigger: 'blur' },
   ],
 })
 
@@ -190,11 +150,7 @@ async function submit(): Promise<boolean> {
     return false;
   }
 
-  // const formData = new FormData();
-  // for (const [k, v] of Object.entries(ruleForm.value)) {
-  //     if (v && k!= 'id')
-  //       formData.append(k, v);
-  //   }
+
   const { error, status } = await useFetchApi(`demo/post/${props.edit ? oldForm.value?.maTb + '/' : ''}`, {
     method: props.edit ? 'PUT' : 'POST',
     server: false,
@@ -204,17 +160,17 @@ async function submit(): Promise<boolean> {
   if (status.value == 'success') {
     return true;
   } else if (status.value == 'error') {
-    // ElNotification({
-    //   title: 'Error',
-    //   message: error.value?.data,
-    //   type: 'error',
-    // })
-    const msg = error.value?.statusCode == 400 ? 'Thiết bị đã có' : error.value?.data
     ElNotification({
-      title: 'Không thể thêm mới',
-      message: msg,
+      title: 'Error',
+      message: error.value?.data,
       type: 'error',
     })
+    // const msg = error.value?.statusCode == 400 ? 'Thiết bị đã có' : error.value?.data
+    // ElNotification({
+    //   title: 'Không thể thêm mới',
+    //   message: msg,
+    //   type: 'error',
+    // })
   }
   return false;
 }

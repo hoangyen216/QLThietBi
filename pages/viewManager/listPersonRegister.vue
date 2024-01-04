@@ -11,8 +11,7 @@
 
         </el-space>
         <client-only>
-            <el-table  v-loading="pending" ref="multipleTableRef" :data="tableData"
-                style="width: 100%">
+            <el-table v-loading="pending" ref="multipleTableRef" :data="tableData" style="width: 100%">
                 <el-table-column type="expand">
                     <template #default="props">
                         <el-row>
@@ -33,7 +32,7 @@
                                 <el-table border :data="props.row.listCTPDK" style="width: 100%; margin-top: 20px;">
                                     <el-table-column prop="tenThietBi" label="Tên thiết bị" />
                                     <el-table-column prop="soLuong" label="Số lượng" />
-                                   
+
                                 </el-table>
                             </el-col>
                             <el-col :span="8">
@@ -44,7 +43,7 @@
 
 
                             <el-col :span="7" style="background-color: white">
-                                
+
                             </el-col>
                             <el-col :span="5" style="background-color: white">
 
@@ -103,7 +102,7 @@
                     </template>
                 </el-table-column>
                 <!-- <el-table-column prop="ghiChu" label="Ghi Chú" /> -->
-                <el-table-column width="150" prop="trangThai" label="Trạng Thái" :align="center" :filters="[
+                <el-table-column width="150" prop="trangThai" label="Trạng Thái" :filters="[
                     { text: 'Chờ duyệt', value: 'Chờ duyệt' },
                     { text: 'Duyệt', value: 'Duyệt' },
                     { text: 'Không duyệt', value: 'Không duyệt' },
@@ -112,11 +111,11 @@
                 ]" :filter-method="filterTag">
                     <template #default="scope">
 
-                        <el-button size="large" style="padding: 0; " text
-                            @click="dialogFormVisible = true; formDuyetDangKy.maPdk = scope.row.maPdk">
-                            <el-tag style="width: 97px;" size="large" :type="showTypeTag(scope.row.trangThai)" disable-transitions>{{
-                                scope.row.trangThai
-                            }}</el-tag>
+                        <el-button size="large" style="padding: 0; " text @click="xuLyTrangThai(scope.row)">
+                            <el-tag style="width: 97px;" size="large" :type="showTypeTag(scope.row.trangThai)"
+                                disable-transitions>{{
+                                    scope.row.trangThai
+                                }}</el-tag>
                         </el-button>
 
                     </template>
@@ -129,18 +128,11 @@
     </el-card>
     <client-only>
         <el-dialog v-model="dialogTableVisible" :modal="false" :append-to-body="true">
-            <!-- <p>{{ dialogModel?.maPdk }}</p>
-            <el-image style="height: 100px;" :src="`data:image/png;base64,${dialogModel?.qrcode}`" fit="contain">
-                <template #error>
-                    <div class="image-slot">
-                        <el-icon><icon-picture /></el-icon>
-                    </div>
-                </template>
-            </el-image> -->
+
             <el-table :data="dialogModel?.listCTPDK">
                 <el-table-column property="tenThietBi" label="Tên thiết bị" />
                 <el-table-column property="soLuong" label="Số lượng" />
-                <!-- <el-table-column property="tinhTrangCT" label="Tinh Trang" /> -->
+
             </el-table>
 
 
@@ -149,10 +141,7 @@
             <el-form :model="formDuyetDangKy">
                 <el-form-item label="Trạng Thái" :label-width="formLabelWidth">
                     <el-select v-model="formDuyetDangKy.trangThai" placeholder="Chọn trạng thái">
-                        <el-option label="Duyệt" value="Duyệt" />
-                        <el-option label="Không Duyệt" value="Không Duyệt" />
-                        <el-option label="Đã Mượn" value="Đã Mượn" />
-                        <el-option label="Đã Trả" value="Đã Trả" />
+                        <el-option v-for="item in currentOper" :label="item" :value="item" />
                     </el-select>
 
                 </el-form-item>
@@ -179,13 +168,22 @@ const pageSize = ref(10);
 const total = ref(0);
 const reload = ref(0);
 const dialogModel = ref<PDK>()
-
+const user = useCookie('user').value
+const currentOper = ref<string[]>([])
 
 const formDuyetDangKy = reactive({
     trangThai: '',
-    maPdk: '2'
-    // lyDo: '',
+    maPdk: '',
+    username: user,
 })
+
+const operations = new Map<string, string[]>(
+    [
+        ['Duyệt', ['Đã Mượn']],
+        ['Đã Mượn', ['Đã Trả']],
+        ['Chờ Duyệt', ['Duyệt', 'Không Duyệt']],
+    ]
+)
 
 interface PDK {
     listCTPDK: listCTPDK[],
@@ -212,6 +210,21 @@ const handleClose = (done: () => void) => {
             done()
         })
 
+}
+
+function xuLyTrangThai(row: any) {
+    if (row.trangThai == "Không Duyệt"||row.trangThai == "Đã Trả") {
+        ElMessage({
+            message: 'Từ chối yêu cầu thay đổi trạng thái',
+
+        })
+        return;
+    }
+
+    currentOper.value = operations.get(row.trangThai)??[];
+    dialogFormVisible.value = true;
+    formDuyetDangKy.trangThai = row.trangThai
+    formDuyetDangKy.maPdk = row.maPdk
 }
 
 const tableData = ref<PDK[]>();

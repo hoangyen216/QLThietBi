@@ -13,6 +13,7 @@ interface Device {
     soLuong: number
     hinhanh: string| UploadFile
     huongDanSuDung: string
+    qrcode: string
 }
 
 interface DataRegister {

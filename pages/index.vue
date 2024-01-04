@@ -1,4 +1,59 @@
 <template>
+    
+    <div class="display-total"  v-if="role?.includes('Manager')">
+
+            <el-card shadow="never" class="card">
+                <el-row justify="center">
+                    <el-col :span="10">
+                        <Icon class="icon-total" name="tabler:chart-pie-filled" color="#009cff"  />
+
+                    </el-col>
+                    <el-col :span="12">
+
+                        <el-text tag="b" type="info">Tổng số thiết bị</el-text><br />
+                        <el-text tag="b">{{ soLuongTong }}</el-text>
+
+                    </el-col>
+                </el-row>
+            </el-card>
+
+
+            <el-card shadow="never" class="card">
+
+                <el-row justify="center">
+                    <el-col :span="10">
+                        <Icon name="ion:bar-chart" color="#009cff" class="icon-total" />
+
+                    </el-col>
+                    <el-col :span="12">
+
+                        <el-text tag="b"  type="info">Số lượng hiện tại trong kho</el-text><br />
+                        <el-text tag="b">{{ soLuongHT }}</el-text>
+
+                    </el-col>
+                </el-row>
+            </el-card>
+
+
+            <el-card shadow="never" class="card">
+
+                <el-row justify="center">
+                    <el-col :span="10">
+                        <Icon name="ooui:chart" color="#009cff" class="icon-total" />
+
+                    </el-col>
+                    <el-col :span="12">
+
+                        <el-text tag="b"  type="info">Số lượng thiết bị đang cho mượn</el-text><br />
+                        <el-text tag="b">{{ soLuongCM }}</el-text>
+
+                    </el-col>
+                </el-row>
+            </el-card>
+
+
+    </div>
+
     <el-card shadow="never">
         <el-space :wrap="true" class="mb-2">
 
@@ -14,7 +69,7 @@
 
             <!-- <el-autocomplete v-model="state2" :fetch-suggestions="querySearch" :trigger-on-focus="false" clearable
                 class="inline-input w-50" placeholder="Please Input" @select="handleSelect" /> -->
-            <el-input v-model="query" @input="searchDevice()" @keyup.enter="searchDevice()" clearable
+            <el-input style="width: 300px;" v-model="query" @input="searchDevice()" @keyup.enter="searchDevice()" clearable
                 placeholder="Tìm Kiếm">
                 <template #prefix>
                     <Icon name="material-symbols-light:search" color="gray" width="26" height="26" />
@@ -24,7 +79,7 @@
 
         </el-space>
         <client-only>
-            <el-table  ref="multipleTableRef" :data="data1" style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table ref="multipleTableRef" :data="data1" style="width: 100%" @selection-change="handleSelectionChange">
                 <!-- <el-table-column type="selection" width="55" /> -->
                 <el-table-column type="expand">
                     <template #default="props">
@@ -39,6 +94,7 @@
                                 <el-space direction="vertical" alignment="left">
                                     <el-row>
                                         <el-text class="mx-1" tag="b">Tên viết tắt: </el-text>
+
                                         <el-text class="mx-1"> {{ props.row.tenVietTat }}</el-text>
                                     </el-row>
                                     <el-row>
@@ -47,7 +103,7 @@
                                     </el-row>
                                     <el-row>
                                         <el-text class="mx-1 " tag="b">Thời gian bảo dưỡng: </el-text>
-                                        <el-text class="mx-1"> {{ datetimeFormat(props.row.tgbaoDuong) }}</el-text>
+                                        <el-text class="mx-1"> {{ props.row.tgbaoDuong }}</el-text>
                                     </el-row>
                                     <el-row>
                                         <el-text class="mx-1" tag="b">Tình trạng: </el-text>
@@ -62,6 +118,7 @@
                                         <el-text class="mx-1"> {{ props.row.huongDanSuDung }}</el-text>
                                     </el-row>
 
+
                                 </el-space>
                             </el-col>
                             <el-col :span="8" style="background-color: white">
@@ -72,11 +129,22 @@
                                     </el-row>
                                     <el-row>
                                         <el-text class="mx-1 " tag="b">Thời gian bảo hành: </el-text>
-                                        <el-text class="mx-1"> {{ datetimeFormat(props.row.tgbaoHanh) }}</el-text>
+                                        <el-text class="mx-1"> {{ props.row.tgbaoHanh }}</el-text>
                                     </el-row>
                                     <el-row>
                                         <el-text class="mx-1 " tag="b">Người nhập kho: </el-text>
                                         <el-text class="mx-1"> {{ props.row.nguoiNhapKho }}</el-text>
+                                    </el-row>
+                                    <el-row>
+                                        <!-- <el-text class="mx-1 " tag="b">QR Code: </el-text> -->
+                                        <el-image style="height: 100px;" :src="`data:image/png;base64,${props.row.qrcode}`"
+                                            fit="contain">
+                                            <template #error>
+                                                <div class="image-slot">
+                                                    <el-icon><icon-picture /></el-icon>
+                                                </div>
+                                            </template>
+                                        </el-image>
                                     </el-row>
                                 </el-space>
                             </el-col>
@@ -90,13 +158,13 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="ten" label="Tên Thiết Bị" />
-                <el-table-column prop="soLuong" label="Số Lượng" />
+                <el-table-column prop="soLuongHienCo" label="Số Lượng" />
                 <el-table-column prop="nguoiNhapKho" label="Người Nhập Kho" />
                 <el-table-column prop="tinhTrang" label="Tình trạng" />
-                <el-table-column v-if="role?.includes('Manager')" width="150">
+                <el-table-column label="Tác Vụ" v-if="role?.includes('Manager')" width="150">
                     <template #default="scope">
 
-                        <el-button  @click="navigateTo(`/devices/${scope.row.maTb}`)">
+                        <el-button @click="navigateTo(`/devices/${scope.row.maTb}`)">
                             <Icon name="bx:edit" />
                         </el-button>
                         <client-only>
@@ -160,6 +228,9 @@ const reload = ref(0);
 const route = useRoute();
 const addNewRef = ref();
 const role = useCookie('role').value;
+const soLuongTong = ref(0);
+const soLuongHT = ref(0);
+const soLuongCM = ref(0);
 
 // console.log("in",role?.includes('Manager'));
 
@@ -175,20 +246,28 @@ async function getData() {
         watch: false
     });
     if (data.value) {
-        const newData = data.value as { itemCount: number, data: any };
+        const newData = data.value as { itemCount: number, data: any, soLuongCM: number, soLuongTong: number, soLuongHT: number  };
         tableData.value = newData?.data as Device[];
         total.value = newData.itemCount;
+        soLuongCM.value = newData.soLuongCM;
+        soLuongHT.value = newData.soLuongHT
+        soLuongTong.value = newData.soLuongTong;
     }
 }
+
+
 
 
 onMounted(() => {
     getData()
 })
 
-watch(reload, () => {
+watch(reload,  () => {
     getData()
 })
+
+
+
 
 const data1 = computed(() => {
     return query.value == '' ? tableData.value : filterDevice.value
@@ -208,10 +287,9 @@ async function searchDevice() {
     });
 
     if (data.value) {
-        const newData = data.value as { itemCount: number, data: any };
+        const newData = data.value as { itemCount: number, data: any};
         filterDevice.value = newData?.data as Device[];
         console.log("filter", filterDevice.value);
-
         total1.value = newData.itemCount;
     }
 }
@@ -251,6 +329,32 @@ async function submit() {
 </script>
 
 <style>
+
+.icon-total{
+    width:60px;
+    height:60px;
+}
+
+@media (min-width: 768px) {
+  .display-total {
+    display: flex;
+
+  }
+  .card {
+    width: 33.33%;
+    border-radius: 7px;
+    
+}
+}
+.card {
+    height: 115px;
+}
+.display-total {
+   
+    gap: 2%;
+    margin-bottom: 2%;
+  }
+
 .el-row {
     margin-bottom: 20px;
 }

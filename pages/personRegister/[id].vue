@@ -15,8 +15,8 @@
                         <el-text class="mx-1"> {{ dataDetail?.maPdk }}</el-text>
                     </el-row>
                     <el-row>
-                        <el-text class="mx-1" tag="b">NgàyMượn: </el-text>
-                        <el-text class="mx-1"> {{ datetimeFormat(dataDetail?.ngayMuon) }}</el-text>
+                        <!-- <el-text class="mx-1" tag="b">NgàyMượn: </el-text>
+                        <el-text class="mx-1"> {{ datetimeFormat(dataDetail?.ngayMuon) }}</el-text> -->
                     </el-row>
                     <el-row>
                         <el-text class="mx-1" tag="b">Trạng Thái: </el-text>

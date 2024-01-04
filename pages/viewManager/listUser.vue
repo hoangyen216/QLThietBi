@@ -6,7 +6,12 @@
             <el-table-column type="index" label="STT" width="100px" />
             <el-table-column prop="userName" label="Tên Tài Khoản" />
             <el-table-column prop="email" label="Email" />
-            <el-table-column prop="roles" label="Role">
+            <el-table-column prop="roles" label="Role" :filters="[
+                    { text: 'User', value: 'User' },
+                    { text: 'Admin', value: 'Admin' },
+                    { text: 'Manager', value: 'Manager' },
+
+                ]" :filter-method="filterTag">
 
                 <template #default="scope">
             
@@ -61,6 +66,11 @@ const dialogFormVisible = ref(false)
 const page = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const reload = ref(0);
+const filterTag = (value: string, row: Role) => {
+    
+    return row.roles[0] === value
+}
 
 const formSetRole = reactive({
     role: '',
@@ -72,8 +82,8 @@ const handleClose = (done: () => void) => {
         .then(() => {
             done()
         })
-
 }
+
 async function formSubmitSetRole() {
 
     if (formSetRole.role == '') return
@@ -89,6 +99,7 @@ async function formSubmitSetRole() {
         watch: false
     })
     if (status.value == 'success') {
+        reload.value++;
         ElNotification({
             title: 'Thiết lập thành công',
             type: 'success',
@@ -101,6 +112,7 @@ async function formSubmitSetRole() {
         })
     }
     dialogFormVisible.value = false
+
 }
 
 const tableData = ref<Role[]>()
@@ -115,7 +127,12 @@ const { data } = useFetchApi('admin/getall', {
     query: {
         page: page,
         pageSize: pageSize,
-    }
+    },
+    watch: [
+        page,
+        pageSize,
+        reload,
+    ]
 });
 watch(data, (x) => {
     if (!x)

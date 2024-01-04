@@ -1,35 +1,14 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <!-- <el-aside width="200px" style="height: 620px">
-                <el-row class="tac" style="height: 620px">
-                    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
-                        <NuxtLink to="/">
-                            <el-menu-item index="1">
-                                <el-icon><icon-menu /></el-icon>
-                                Danh Sách Thiết Bị
-                            </el-menu-item>
-                        </NuxtLink>
-
-
-
-                        <el-menu-item index="2">
-                            <el-icon>
-                                <Document />
-                            </el-icon>
-                            <span>Đăng Ký</span>
-                        </el-menu-item>
-                        
-                    </el-menu>
-                </el-row>
-            </el-aside> -->
+            
             <el-container>
                 <el-header style="display: inline-flex; align-items: center; justify-content: space-between;">
                     <el-menu  mode="horizontal" style="width: 93%;">
                         <el-menu-item @click="navigateTo('/')" index="1">Danh Sách Thiết Bị</el-menu-item>
-                        <el-menu-item @click="navigateTo('/personRegister/showMain')" index="2">Đăng Ký</el-menu-item>
+                        <el-menu-item v-if="role?.includes('User')||role?.includes('Admin')"  @click="navigateTo('/personRegister/showMain')" index="2">Đăng Ký</el-menu-item>
                         <el-menu-item  v-if="role?.includes('Manager')||role?.includes('Admin')" @click="navigateTo('/viewManager/listPersonRegister')" index="3">Danh Sách PDK</el-menu-item>
-                        <el-menu-item  v-if="role?.includes('Manager')||role?.includes('Admin')" @click="navigateTo('/viewManager/listUser')" index="4">Danh Sách Người Dùng</el-menu-item>
+                        <el-menu-item  v-if="role?.includes('Admin')" @click="navigateTo('/viewManager/listUser')" index="4">Danh Sách Người Dùng</el-menu-item>
                     </el-menu>
                     <client-only>
                         <el-dropdown class="el-dropdown-link" trigger="click" @command="handleCommand">
@@ -85,11 +64,13 @@ function handleCommand(command: string) {
 
 </script>
 <style >
-.el-table .cell {
+.el-table .cell, .el-text{
 
     word-break: break-word !important;
 
 }
+
+
 
 .el-dropdown-link {
     cursor: pointer;
