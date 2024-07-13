@@ -5,15 +5,15 @@
             <h4 style="color:#0d82dc">Chi Tiết Phiếu Đăng Ký</h4>
             <el-form ref="formRef" :model="dynamicValidateForm" label-width="120px"
                 style=" margin-top: 30px;margin-bottom: 69px;" :rules="rules">
-                <el-form-item label="Ngày mượn" prop="ngayMuon">
+                <el-form-item label="Ngày mượn" prop="borrowDate">
                     <el-date-picker v-model="dynamicValidateForm.borrowDate" type="date" label="Pick a date"
                         placeholder="Pick a date" style="width: 100%" format="DD-MM-YYYY" value-format="YYYY-MM-DD" />
                 </el-form-item>
-                <el-form-item label="Ngày Hẹn Trả" prop="ngayTra">
+                <el-form-item label="Ngày Hẹn Trả" prop="returnDate">
                     <el-date-picker v-model="dynamicValidateForm.returnDate" type="date" label="Pick a date"
                         placeholder="Pick a date" format="DD-MM-YYYY" value-format="YYYY-MM-DD" style="width: 100%" />
                 </el-form-item>
-                <el-form-item label="Ghi Chú">
+                <el-form-item label="Ghi Chú" prop="notice">
                     <el-input style="min-height: 64px;" v-model="dynamicValidateForm.notice" type="textarea" />
                 </el-form-item>
                 <el-form-item>
@@ -105,7 +105,7 @@ const rules = reactive({
         },
     ],
     borrowDate: [
-        // { validator: validateNgayMuon, trigger: 'blur' },
+        { validator: validateNgayMuon, trigger: 'blur' },
         {
             required: true,
             message: 'Vui lòng chọn ngày mượn ',
@@ -117,45 +117,43 @@ async function submitForm(ruleformref: FormInstance | undefined) {
 
     const detailDevice = store.cartItems.map(({ deviceID, quantity, warehouseID }) => ({ deviceID, quantity, warehouseID }));
     if (!detailDevice) return
-    if (!ruleformref) return false;
-    try {
-        if (! await ruleformref.validate((valid, fields) => {
-            return valid;
-        })) return false;
-    } catch (error) {
-        return false;
-    }
+    if (!ruleformref) return;
+    await ruleformref.validate(async (valid, fields) => {
+        if (valid) {
+            const { error, status } = await useFetchApi('/regist/create', {
+                method: 'POST',
+                server: false,
+                body: {
+                    listRegist: detailDevice,
+                    warehouseID: detailDevice[0].warehouseID,
+                    borrowDate: dynamicValidateForm.borrowDate,
+                    returnDate: dynamicValidateForm.returnDate,
+                    notice: dynamicValidateForm.notice,
+                    userId: useCookie('userID')
+                },
+                watch: false
+            })
+            if (status.value == 'success') {
+                ElNotification({
+                    title: 'Đã gửi biểu mẫu đăng ký',
+                    message: '',
+                    type: 'success',
+                })
+                store.removeAll()
+                navigateTo('/Products')
+                return true;
 
-    const { error, status } = await useFetchApi('/regist/create', {
-        method: 'POST',
-        server: false,
-        body: {
-            listRegist: detailDevice,
-            warehouseID: detailDevice[0].warehouseID,
-            borrowDate: dynamicValidateForm.borrowDate,
-            returnDate: dynamicValidateForm.returnDate,
-            notice: dynamicValidateForm.notice,
-            userId: useCookie('userID')
-        },
-        watch: false
+            } else if (status.value == 'error') {
+                ElNotification({
+                    title: 'Error',
+                    message: error.value?.data,
+                    type: 'error',
+                })
+            }
+        } else {
+            console.log('error submit!', fields)
+        }
     })
-    if (status.value == 'success') {
-        ElNotification({
-            title: 'Đã gửi biểu mẫu đăng ký',
-            message: '',
-            type: 'success',
-        })
-        store.removeAll()
-        navigateTo('/Products')
-        return true;
-
-    } else if (status.value == 'error') {
-        ElNotification({
-            title: 'Error',
-            message: error.value?.data,
-            type: 'error',
-        })
-    }
 }
 
 </script>
