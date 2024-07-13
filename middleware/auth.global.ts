@@ -16,6 +16,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const toPage = to?.fullPath || ''
     console.log("fullPath", toPage);
 
+    // if(token.value && )
+
 
     //if token doesn't exist redirect to log in
     if (!token.value) {
@@ -31,6 +33,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
             '/personRegister',
             '/Products',
             '/Cart',
+            '/changePassword'
         ]
         const p = userPageAllowed[1]
         if (!userPageAllowed.some((v) => isMatchURL(toPage, v)) || isMatchURL(toPage, '/login1')) {

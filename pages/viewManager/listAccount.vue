@@ -16,10 +16,13 @@
             <el-table-column prop="phoneNumber" label="Số điện thoại" />
             <el-table-column prop="email" label="Email" />
             <el-table-column prop="roleDescr" label="Quyền" />
-            <el-table-column label="Tác Vụ" width="150px">
+            <el-table-column label="Tác Vụ" width="200px">
                 <template #default="scope">
-                    <el-button type="primary" plain @click="updateRole(scope.row.userId,scope.row.roleId);getRole()">
+                    <el-button type="primary" plain @click="updateRole(scope.row.userId, scope.row.roleId); getRole()">
                         <Icon name="bx:edit" />
+                    </el-button>
+                    <el-button type="primary" plain @click="open(scope.row.userId)">
+                        <Icon name="icon-park-outline:back" />
                     </el-button>
                     <client-only>
                         <el-popconfirm title="Bạn có chắc muốn xóa?" width="300"
@@ -100,6 +103,7 @@ const pageSize = ref(10);
 const total = ref(0);
 const reload = ref(0);
 const Role = ref()
+import { ElMessage, ElMessageBox } from 'element-plus'
 const dialogAddAccount = ref(false);
 const updateRoledialog = ref(false);
 const tableData = ref<Account[]>()
@@ -117,6 +121,36 @@ const formUpdateRole = reactive({
     roleId: null
 })
 
+
+const open = (idAccount:number) => {
+    ElMessageBox.confirm(
+        'Bạn có muốn reset mật khẩu của tài khoản này không?',
+        'Thông Báo',
+        {
+            confirmButtonText: 'Chấp nhận',
+            cancelButtonText: 'Hủy Bỏ',
+            type: 'info',
+        }
+    )
+        .then(async () => {
+            ElMessage({
+                type: 'success',
+                message: 'Đã reset mật khẩu thành công',
+            })
+            const { data, error, status } = await useFetchApi(`/user/resetPassword/`, {
+                method: 'POST',
+                query: {
+                    id: idAccount
+                }
+            });
+        })
+    // .catch(() => {
+    //     ElMessage({
+    //         type: 'info',
+    //         message: 'Delete canceled',
+    //     })
+    // })
+}
 async function getRole() {
     const { data } = await useFetchApi('/role/get', {
         method: 'GET',
@@ -214,7 +248,7 @@ async function submitAddAccount(ruleformref: FormInstance | undefined) {
 
 }
 
-async function submitUpdateRole(){
+async function submitUpdateRole() {
     const { status, error } = await useFetchApi(`/user/updateRole/${formUpdateRole.userId}&${formUpdateRole.roleId}`, {
         method: 'POST',
     });
@@ -237,7 +271,7 @@ async function submitUpdateRole(){
     }
 }
 
-async function updateRole(userId: number, roleId:number) {
+async function updateRole(userId: number, roleId: number) {
     updateRoledialog.value = true
     formUpdateRole.userId = userId
 }

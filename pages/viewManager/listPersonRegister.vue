@@ -74,7 +74,7 @@
                     <template #default="scope">
                         <el-text class="mx-1">{{ datetimeFormat(scope.row.borrowDate) }} - {{
                             datetimeFormat(scope.row.returnDate)
-                            }} </el-text>
+                        }} </el-text>
                     </template>
                 </el-table-column>
 
@@ -164,7 +164,7 @@
                     <el-table-column prop="deviceId" label="DeviceId" />
                     <el-table-column prop="itemId" label="ItemId" />
                     <el-table-column prop="beforeStatus" label="beforeStatus" />
-                    <el-table-column label="AfterStatus" width="240px">
+                    <el-table-column prop="afterStatus" label="AfterStatus" width="240px">
                         <template #default="scope">
                             <!-- <el-input v-model="scope.row.afterStatus" style="width: 200px"
                                 placeholder="tình trạng thiết bị" /> -->
@@ -180,7 +180,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogFormVisible = false">Cancel</el-button>
-                    <el-button type="primary" @click=" formSubmitDuyetDangKy()">
+                    <el-button type="primary" @click="formSubmitDuyetDangKy()">
                         Confirm
                     </el-button>
                 </span>
@@ -387,32 +387,40 @@ async function formSubmitDuyetDangKy() {
         }
     }
     if (formDuyetDangKy.trangThai.includes('Đã Trả')) {
-        {
-            const { data } = await useFetchApi('/regist/return', {
-                method: 'POST',
-                server: false,
-                body: {
-                    registID: formDuyetDangKy.maPdk,
-                    listItem: detailRegistData.value?.map(({ itemId, afterStatus }) => ({ itemId, afterStatus }))
-                },
+        if (!detailRegistData.value) return;
+        if (detailRegistData.value.some(e=> !e.afterStatus)) {
+            ElNotification({
+                title: 'Error',
+                message: 'Vui nhập trạng thái sản phẩm',
+                type: 'error',
             })
-            if (data.value) {
-                dataPenaltyTicket.value = data.value as PenaltyTicket
-            }
-            if (status.value == 'success') {
-                reload.value++;
-                ElNotification({
-                    title: 'Đã xác nhận',
-                    type: 'success',
-                })
-            } else if (status.value == 'error') {
-                ElNotification({
-                    title: 'Error',
-                    message: error.value?.data,
-                    type: 'error',
-                })
-            }
+            return
         }
+        const { data } = await useFetchApi('/regist/return', {
+            method: 'POST',
+            server: false,
+            body: {
+                registID: formDuyetDangKy.maPdk,
+                listItem: detailRegistData.value.map(({ itemId, afterStatus }) => ({ itemId, afterStatus }))
+            },
+        })
+        if (data.value) {
+            dataPenaltyTicket.value = data.value as PenaltyTicket
+        }
+        if (status.value == 'success') {
+            reload.value++;
+            ElNotification({
+                title: 'Đã xác nhận',
+                type: 'success',
+            })
+        } else if (status.value == 'error') {
+            ElNotification({
+                title: 'Error',
+                message: error.value?.data,
+                type: 'error',
+            })
+        }
+
     }
 
     dialogFormVisible.value = false

@@ -73,7 +73,7 @@
                                         <span style="padding-left: 5px;">
                                             Quản Lý Thiết Bị</span>
                                     </a>
-                                    <a href="/Products"
+                                    <a v-if="useCookie('role').value !='Manager'" href="/Products"
                                         class="list-group-item border-end-0 d-inline-block text-truncate"
                                         data-bs-parent="#sidebar">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -96,7 +96,7 @@
                                         </svg>
                                         <span style="padding-left: 5px;">Quản Lý
                                             PDK</span></a>
-                                    <a href="/viewManager/listAccount"
+                                    <a v-if="useCookie('role').value !='Manager'" href="/viewManager/listAccount"
                                         class="list-group-item border-end-0 d-inline-block text-truncate"
                                         data-bs-parent="#sidebar">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"

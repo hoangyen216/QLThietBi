@@ -16,7 +16,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="warrantyPeriod" label="Thời gian bảo hành">
-               
+
             </el-table-column>
             <el-table-column label="Tác Vụ" width="150px">
                 <template #default="scope">
@@ -160,7 +160,11 @@ const { data } = useFetchApi(`/item/getbyDeviceID/${route.params.deviceID}`, {
 watch(data, (x) => {
     if (!x)
         return
-    tableData.value = data.value as Item[];
+
+    const newData = x as { itemCount: number, data: any };
+    tableData.value = newData.data as Item[];
+    total.value = newData.itemCount;
+
 })
 
 const resetForm = (formEl: FormInstance | undefined) => {
@@ -202,7 +206,7 @@ async function submitAddItem(ruleformref: FormInstance | undefined) {
                 deviceId: route.params.deviceID,
                 warrantyPeriod: formAddItem.value.warrantyPeriod,
                 maintenanceTime: formAddItem.value.maintenanceTime,
-                lastMaintenance: formAddItem.value.lastMaintenance==''?'0001-01-01T00:00:00Z':formAddItem.value.lastMaintenance,
+                lastMaintenance: formAddItem.value.lastMaintenance == '' ? '0001-01-01T00:00:00Z' : formAddItem.value.lastMaintenance,
                 status: formAddItem.value.status,
                 importerId: 228,
                 posId: formAddItem.value.posId,

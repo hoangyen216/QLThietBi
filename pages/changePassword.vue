@@ -15,7 +15,8 @@
                     <el-input size="large" v-model="form.confirmPassword" show-password />
                 </el-form-item>
                 <div style="text-align: center;">
-                    <el-button size="large" type="primary" @click="onSubmit(ruleFormRef)" :loading="loading" >Thay đổi mật khẩu</el-button>
+                    <el-button size="large" type="primary" @click="onSubmit(ruleFormRef)" :loading="loading">Thay đổi
+                        mật khẩu</el-button>
                 </div>
             </el-form>
         </div>
@@ -27,10 +28,10 @@
 import type { FormInstance, FormRules } from 'element-plus';
 
 definePageMeta({
-    layout: 'viewpersonregister'
+    layout: 'layout1'
 })
 
-const ruleFormRef = ref < FormInstance > ()
+const ruleFormRef = ref<FormInstance>()
 const { bool: loading, setTrue: setLoading, setFalse: setLoaded } = useBoolean(false);
 const form = reactive({
     oldPassword: '',
@@ -74,18 +75,26 @@ async function onSubmit(formEl: FormInstance | undefined) {
             return valid;
         })) return;
         setLoading();
-        const { data, error, status } = await useFetch('https://65183f73582f58d62d358659.mockapi.io/changPass', {
+        const { data, error, status } = await useFetchApi('/user/changepassword', {
             method: 'POST',
-            body: form,
+            body: {
+                userID: useCookie('userID').value,
+                oldPassword: form.oldPassword,
+                newPassword: form.newPassword
+            },
         });
-
-        console.log(data);
         if (status.value == "success") {
             // Handle successful        
             ElNotification({
                 title: 'Đổi mật khẩu thành công',
                 type: 'success',
             })
+            if (useCookie('role').value == "User") {
+                navigateTo('/Products')
+            }
+            else {
+                navigateTo('/')
+            }
         } else if (status.value == 'error') {
             ElNotification({
                 title: 'Lỗi',
