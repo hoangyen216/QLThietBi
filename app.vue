@@ -7,4 +7,5 @@
 </template>
 <script setup lang="ts">
 import vi from 'element-plus/dist/locale/vi.mjs'
+usePersistCart()
 </script>

@@ -10,12 +10,15 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiSecret: '123',
     public: {
-      baseUrl: process.env.BASE_URL || 'http://localhost:5131/',
+      baseUrl: process.env.BASE_URL || 'https://localhost:7123',
     },
   },
 
   elementPlus: { /** Options */ },
-  css: ["bootstrap/dist/css/bootstrap.min.css"],
+  css: ["bootstrap/dist/css/bootstrap.min.css",
+
+    "~/assets/styles/main.scss"
+  ],
 
   ssr: false,
 })

@@ -9,24 +9,25 @@
                 <div class="form">
                     <h2 style="color: var(--el-color-primary);">Đăng Nhập</h2>
                     <el-form ref="ruleFormRef" :model="form" label-position="top" :rules="rules">
-                        <el-form-item label="Tên đăng nhập" prop="username" size="large" :error="validateAsync.username">
-                            <el-input v-model="form.username" />
+                        <el-form-item label="Tên đăng nhập" prop="account" size="large"
+                            :error="validateAsync.account">
+                            <el-input v-model="form.account" />
                         </el-form-item>
 
                         <el-form-item label="Mật khẩu" prop="password" size="large" :error="validateAsync.password">
-                            <el-input v-model="form.password" show-password @keyup.enter="onSubmit(ruleFormRef)"/>
+                            <el-input v-model="form.password" show-password />
                         </el-form-item>
-
                         <div class="flex justify-center">
-                            <el-button type="primary" @click="onSubmit(ruleFormRef)" :loading="loading">Đăng nhập</el-button>
+                            <el-button type="primary" @click="onSubmit(ruleFormRef)" :loading="loading">Đăng
+                                nhập</el-button>
                         </div>
                     </el-form>
-                    <div style="margin-top: 20px;">
+                    <!-- <div style="margin-top: 20px;">
                         <el-text class="mx-1">Chưa có tài khoản?</el-text>
                         <span style="display: inline;">
                             <a href="/register2">Đăng Ký</a>
                         </span>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>
@@ -45,31 +46,44 @@ import { useAuth } from '~/stores/auth';
 useHeadSafe({ title: 'Đăng Nhập' })
 const auth = useAuth();
 
+
+const options = [
+    {
+        value: 'User',
+    },
+    {
+        value: 'Admin',
+    },
+    {
+        value: 'Manager',
+    }
+]
+
 const { bool: loading, setTrue: setLoading, setFalse: setLoaded } = useBoolean(false);
 
 const ruleFormRef = ref<FormInstance>()
 
 const form = reactive({
-    username: 'admin1',
-    password: '@Test123456',
+    account: 'yenh',
+    password: 'Wdn23bW7',
+
 })
 
 const validateAsync = reactive({
-    username: '',
+    account: '',
     password: '',
-
 })
 
 
 
 const rules = reactive({
-    username: [
+    account: [
         { required: true, message: 'Hãy nhập tên người dùng', trigger: 'blur' },
     ],
     password: [
         { required: true, message: 'Hãy nhập mật khẩu', trigger: 'blur' },
     ],
-   
+
 })
 
 async function onSubmit(formEl: FormInstance | undefined) {
@@ -81,9 +95,17 @@ async function onSubmit(formEl: FormInstance | undefined) {
         })) return;
         setLoading()
         await auth.login(form)
-        navigateTo('/')
+        const role =  useCookie('role')
+        if(role.value =="User")
+        {
+            navigateTo('/Products')
+        }
+        else{
+            navigateTo('/')
+        }
+       
     } catch (error) {
-        console.error("loi",error);
+        console.error("loi", error);
     } finally {
         setLoaded()
     }
@@ -121,7 +143,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 }
 
 @media (max-width: 767.98px) {
-    .form{
+    .form {
         width: 70%;
     }
 }

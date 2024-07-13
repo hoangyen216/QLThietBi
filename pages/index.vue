@@ -1,203 +1,127 @@
 <template>
-    
-    <div class="display-total"  v-if="role?.includes('Manager')">
 
-            <el-card shadow="never" class="card">
-                <el-row justify="center">
-                    <el-col :span="10">
-                        <Icon class="icon-total" name="tabler:chart-pie-filled" color="#009cff"  />
+    <div class="display-total" v-if="role?.includes('Manager')">
 
-                    </el-col>
-                    <el-col :span="12">
+        <el-card shadow="never" class="card">
+            <el-row justify="center">
+                <el-col :span="10">
+                    <Icon class="icon-total" name="tabler:chart-pie-filled" color="#009cff" />
 
-                        <el-text tag="b" type="info">Tổng số thiết bị</el-text><br />
-                        <el-text tag="b">{{ soLuongTong }}</el-text>
+                </el-col>
+                <el-col :span="12">
 
-                    </el-col>
-                </el-row>
-            </el-card>
+                    <el-text tag="b" type="info">Tổng số thiết bị</el-text><br />
+                    <el-text tag="b">{{ soLuongTong }}</el-text>
 
-
-            <el-card shadow="never" class="card">
-
-                <el-row justify="center">
-                    <el-col :span="10">
-                        <Icon name="ion:bar-chart" color="#009cff" class="icon-total" />
-
-                    </el-col>
-                    <el-col :span="12">
-
-                        <el-text tag="b"  type="info">Số lượng hiện tại trong kho</el-text><br />
-                        <el-text tag="b">{{ soLuongHT }}</el-text>
-
-                    </el-col>
-                </el-row>
-            </el-card>
+                </el-col>
+            </el-row>
+        </el-card>
 
 
-            <el-card shadow="never" class="card">
+        <el-card shadow="never" class="card">
 
-                <el-row justify="center">
-                    <el-col :span="10">
-                        <Icon name="ooui:chart" color="#009cff" class="icon-total" />
+            <el-row justify="center">
+                <el-col :span="10">
+                    <Icon name="ion:bar-chart" color="#009cff" class="icon-total" />
 
-                    </el-col>
-                    <el-col :span="12">
+                </el-col>
+                <el-col :span="12">
 
-                        <el-text tag="b"  type="info">Số lượng thiết bị đang cho mượn</el-text><br />
-                        <el-text tag="b">{{ soLuongCM }}</el-text>
+                    <el-text tag="b" type="info">Số lượng hiện tại trong kho</el-text><br />
+                    <el-text tag="b">{{ soLuongHT }}</el-text>
 
-                    </el-col>
-                </el-row>
-            </el-card>
+                </el-col>
+            </el-row>
+        </el-card>
+
+
+        <el-card shadow="never" class="card">
+
+            <el-row justify="center">
+                <el-col :span="10">
+                    <Icon name="ooui:chart" color="#009cff" class="icon-total" />
+
+                </el-col>
+                <el-col :span="12">
+
+                    <el-text tag="b" type="info">Số lượng thiết bị đang cho mượn</el-text><br />
+                    <el-text tag="b">{{ soLuongCM }}</el-text>
+
+                </el-col>
+            </el-row>
+        </el-card>
 
 
     </div>
 
-    <el-card shadow="never">
-        <el-space :wrap="true" class="mb-2">
-
+    <h3>Danh Sách Thiết Bị Theo Kho</h3>
+    <el-card shadow="never" style=" min-height: 100vh; position: relative;">
+        <el-space :wrap="true" class="mb-2" style="position: absolute; right: 10px; top: 18px;">
             <NuxtLink to="/devices/add-device" :underline="false">
-                <el-button v-if="role?.includes('Manager')" type="primary">
+                <el-button type="primary">
+                    <!-- v-if="role?.includes('Manager')" -->
                     <Icon name="mdi:plus" class="mr-2" size="20" />
                     Tạo mới
                 </el-button>
             </NuxtLink>
-
         </el-space>
-        <el-space :wrap="true" class="mb-2">
 
-            <!-- <el-autocomplete v-model="state2" :fetch-suggestions="querySearch" :trigger-on-focus="false" clearable
+        <!-- <el-select v-model="value" filterable placeholder="Lọc theo loại" style="width: 150px; margin-right: 5px;">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select> -->
+
+       <div style="display: flex;">
+        <el-select clearable v-model="selectWarehouse" filterable placeholder="Lọc theo kho"
+            style="width: 150px; margin-right: 5px;">
+            <el-option v-for="item in dataWareHouse" :key="item.warehouseId" :label="item.warehouseDescr"
+                :value="item.warehouseId" />
+        </el-select>
+        <!-- <el-autocomplete v-model="state2" :fetch-suggestions="querySearch" :trigger-on-focus="false" clearable
                 class="inline-input w-50" placeholder="Please Input" @select="handleSelect" /> -->
-            <el-input style="width: 300px;" v-model="query" @input="searchDevice()" @keyup.enter="searchDevice()" clearable
+        <div style="width: 300px;">
+            <el-input v-model="query" @input="searchDevice()" @keyup.enter="searchDevice()" clearable
                 placeholder="Tìm Kiếm">
                 <template #prefix>
                     <Icon name="material-symbols-light:search" color="gray" width="26" height="26" />
                 </template>
             </el-input>
-
-
-        </el-space>
+        </div>
+       </div>
         <client-only>
-            <el-table ref="multipleTableRef" :data="data1" style="width: 100%" @selection-change="handleSelectionChange">
-                <!-- <el-table-column type="selection" width="55" /> -->
-                <el-table-column type="expand">
-                    <template #default="props">
-                        <el-row style="margin-top: 20px; margin-bottom: 20px;">
-                            <el-col :span="6" style="background-color: white">
-                                <el-space direction="vertical" alignment="center" style="width: 100%;">
-                                    <el-image style="height: 100px" :src="props.row.hinhanh" fit="contain" />
-                                    <el-text class="mx-1" style="font-size: x-large" tag="b">{{ props.row.ten }}</el-text>
-                                </el-space>
-                            </el-col>
-                            <el-col :span="10" style="background-color: white">
-                                <el-space direction="vertical" alignment="left">
-                                    <el-row>
-                                        <el-text class="mx-1" tag="b">Tên viết tắt: </el-text>
-
-                                        <el-text class="mx-1"> {{ props.row.tenVietTat }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Thời gian nhập kho: </el-text>
-                                        <el-text class="mx-1"> {{ datetimeFormat(props.row.tgnhapKho) }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Thời gian bảo dưỡng: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.tgbaoDuong }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1" tag="b">Tình trạng: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.tinhTrang }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Mô tả Chức năng: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.moTaChucNang }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Hướng dẫn sử dụng: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.huongDanSuDung }}</el-text>
-                                    </el-row>
-
-
-                                </el-space>
-                            </el-col>
-                            <el-col :span="8" style="background-color: white">
-                                <el-space direction="vertical" alignment="left">
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Số lượng: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.soLuong }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Thời gian bảo hành: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.tgbaoHanh }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <el-text class="mx-1 " tag="b">Người nhập kho: </el-text>
-                                        <el-text class="mx-1"> {{ props.row.nguoiNhapKho }}</el-text>
-                                    </el-row>
-                                    <el-row>
-                                        <!-- <el-text class="mx-1 " tag="b">QR Code: </el-text> -->
-                                        <el-image style="height: 100px;" :src="`data:image/png;base64,${props.row.qrcode}`"
-                                            fit="contain">
-                                            <template #error>
-                                                <div class="image-slot">
-                                                    <el-icon><icon-picture /></el-icon>
-                                                </div>
-                                            </template>
-                                        </el-image>
-                                    </el-row>
-                                </el-space>
-                            </el-col>
-                        </el-row>
-                    </template>
-                </el-table-column>
+            <el-table ref="multipleTableRef" :data="data1" style="width: 100%"
+                @selection-change="handleSelectionChange">
+               
                 <!-- <el-table-column prop="id" width="50" label="Id" /> -->
-                <el-table-column prop="hinhanh" label="Ảnh" align="center">
+                <!-- <el-table-column prop="image" label="Ảnh" align="center">
                     <template #default="scope">
-                        <el-image style="height: 50px" :src="scope.row.hinhanh" fit="contain" />
+                        <el-image style="height: 50px" :src="scope.row.image" fit="contain" />
                     </template>
-                </el-table-column>
-                <el-table-column prop="ten" label="Tên Thiết Bị" />
-                <el-table-column prop="soLuongHienCo" label="Số Lượng" />
-                <el-table-column prop="nguoiNhapKho" label="Người Nhập Kho" />
-                <el-table-column prop="tinhTrang" label="Tình trạng" />
-                <el-table-column label="Tác Vụ" v-if="role?.includes('Manager')" width="150">
+                </el-table-column> -->
+                <el-table-column prop="warehouseDescr" label="Tên Kho" />
+                <el-table-column prop="deviceDescr" label="Tên Thiết Bị" />
+                <el-table-column prop="totalAmount" label="Số Lượng Tổng" />
+                <el-table-column prop="currentAmount" label="Số Lượng Hiện Có" />
+                <el-table-column label="Tác Vụ" width="100">
+                    <!-- v-if="role?.includes('Manager')" -->
                     <template #default="scope">
-
-                        <el-button @click="navigateTo(`/devices/${scope.row.maTb}`)">
-                            <Icon name="bx:edit" />
+                        <el-button type="primary" @click="navigateTo(`/Item/listItemByDeviceID/${scope.row.deviceID}`)">
+                            <Icon name="pajamas:details-block" height="18" width="20" style="color: white" />        
                         </el-button>
-                        <client-only>
-                            <el-popconfirm title="Bạn có chắc muốn xóa?" width="300"
-                                @confirm="(_) => deleteDevice(scope.row.maTb)">
-                                <template #reference>
-                                    <el-button type="danger">
-                                        <Icon name="mingcute:delete-2-line" />
-
-                                    </el-button>
-                                </template>
-                            </el-popconfirm>
-                        </client-only>
-
                     </template>
                 </el-table-column>
             </el-table>
         </client-only>
-        <el-pagination @current-change="current_page()" v-model:current-page="page" v-model:page-size="pageSize"
-            :page-sizes="[10, 20, 30]" :background=true layout="sizes, prev, pager, next"
-            :total="(query == '' ? total : total1)" style="margin-top: 25px" />
+        <el-pagination style=" bottom: 2px; position: absolute;" @current-change="current_page()"
+            v-model:current-page="page" v-model:page-size="pageSize"  :background=true
+            layout=" prev, pager, next" :total="(query == '' ? total : total1)" />
 
     </el-card>
 </template>
 
 <script setup lang="ts">
-useHeadSafe({ title: 'Danh Sách Thiết Bị' })
+useHeadSafe({ title: 'Danh Sách Thiết Bị Theo Kho' })
 import { ref } from 'vue'
 
-const activeNames = ref(['1'])
-const handleChange = (val: string[]) => {
-    console.log(val)
-}
 
 function current_page() {
     if (query.value == '') {
@@ -208,16 +132,10 @@ function current_page() {
 }
 
 
-
-// console.log("currenpage", p);
-
-
 const filterDevice = ref<Device[]>()
 const query = ref("")
 const tableData = ref<Device[]>()
 const multipleSelection = ref<Device[]>([])
-const dialogVisible = ref(false)
-
 const page = ref<number>(1);
 const page1 = ref<number>(1);
 const pageSize = ref<number>(10);
@@ -226,27 +144,28 @@ const total = ref(0);
 const total1 = ref(0);
 const reload = ref(0);
 const route = useRoute();
-const addNewRef = ref();
+const dataWareHouse = ref();
 const role = useCookie('role').value;
 const soLuongTong = ref(0);
 const soLuongHT = ref(0);
 const soLuongCM = ref(0);
-
+const selectWarehouse = ref('');
 // console.log("in",role?.includes('Manager'));
 
 
 async function getData() {
-    const { data, pending } = await useFetchApi('demo/getall', {
+
+    const { data, pending } = await useFetchApi(`device/getall/${selectWarehouse.value == "" ? 1 : selectWarehouse.value}`, {
         method: 'GET',
         server: false,
         query: {
             page: page,
             pageSize: pageSize,
         },
-        watch: false
+
     });
     if (data.value) {
-        const newData = data.value as { itemCount: number, data: any, soLuongCM: number, soLuongTong: number, soLuongHT: number  };
+        const newData = data.value as { itemCount: number, data: any, soLuongCM: number, soLuongTong: number, soLuongHT: number };
         tableData.value = newData?.data as Device[];
         total.value = newData.itemCount;
         soLuongCM.value = newData.soLuongCM;
@@ -255,19 +174,16 @@ async function getData() {
     }
 }
 
-
-
-
 onMounted(() => {
-    getData()
-})
-
-watch(reload,  () => {
-    getData()
+    getData();
+    getWareHouse()
 })
 
 
 
+watch([reload, selectWarehouse], () => {
+    getData()
+})
 
 const data1 = computed(() => {
     return query.value == '' ? tableData.value : filterDevice.value
@@ -275,7 +191,7 @@ const data1 = computed(() => {
 
 async function searchDevice() {
 
-    const { data } = await useFetchApi(`demo/findbyname/${query.value}`, {
+    const { data } = await useFetchApi(`/device/getbyname/${query.value}&${selectWarehouse.value}`, {
         method: 'GET',
         server: false,
         query: {
@@ -287,7 +203,7 @@ async function searchDevice() {
     });
 
     if (data.value) {
-        const newData = data.value as { itemCount: number, data: any};
+        const newData = data.value as { itemCount: number, data: any };
         filterDevice.value = newData?.data as Device[];
         console.log("filter", filterDevice.value);
         total1.value = newData.itemCount;
@@ -298,62 +214,56 @@ function handleSelectionChange(val: Device[]) {
     multipleSelection.value = val
 }
 
-const handleClose = (done: () => void) => {
-    ElMessageBox.confirm('Bạn có chắc muốn thoát không?')
-        .then(() => {
-            done()
-        })
-        .catch(() => {
-            // catch error
-        })
+
+async function getWareHouse() {
+    const { data } = await useFetchApi('warehouse/getall', {
+        method: 'GET',
+        query: {
+            page: 1,
+            pageSize: 100,
+        },
+
+    });
+    if (data.value) {
+        dataWareHouse.value = (data.value as { data: any }).data;
+    }
+
 }
 
-async function deleteDevice(id: number) {
-    const { status } = await useFetchApi(`demo/delete/${id}`, {
-        method: 'DELETE',
-        server: false,
-    })
-    if (status.value == 'success') {
-        page.value = 1;
-        ++reload.value;
-    }
-}
 
-async function submit() {
-    if (await addNewRef.value.submit()) {
-        dialogVisible.value = false;
-        ++reload.value;
-    }
-}
+
+
 
 </script>
 
-<style>
-
-.icon-total{
-    width:60px;
-    height:60px;
+<style scoped>
+.icon-total {
+    width: 60px;
+    height: 60px;
 }
 
 @media (min-width: 768px) {
-  .display-total {
-    display: flex;
+    .display-total {
+        display: flex;
 
-  }
-  .card {
-    width: 33.33%;
-    border-radius: 7px;
-    
+    }
+
+    .card {
+        width: 33.33%;
+        border-radius: 7px;
+
+    }
 }
-}
+
 .card {
     height: 115px;
 }
+
 .display-total {
-   
+
     gap: 2%;
     margin-bottom: 2%;
-  }
+}
 
 .el-row {
     margin-bottom: 20px;

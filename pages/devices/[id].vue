@@ -1,9 +1,9 @@
 <template>
   <div class="container text-center">
-    <el-text tag="b" style="font-size: x-large;">Edit Device </el-text>
-    <CreateDevice ref="configure" :edit="true"  />
+    <el-text tag="b" style="font-size: x-large;">Cập Nhật Thiết Bị </el-text>
+    <CreateDevice ref="configure" :edit="true" />
     <el-button type="primary" style=" margin-top: 15px;" @click="updateForm()">
-      Update
+      Cập Nhật
     </el-button>
   </div>
 
@@ -21,7 +21,7 @@ async function updateForm() {
       message: 'Cập nhật thành công',
       type: 'success',
     })
-    navigateTo('/')
+    navigateTo('/devices/listDevice')
   }
 }
 

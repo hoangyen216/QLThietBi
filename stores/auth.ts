@@ -1,16 +1,18 @@
 import { defineStore } from 'pinia'
 
 interface UserPayloadInterface {
-    username: string;
+    account: string;
     password: string;
 }
 
 interface LoginInfo {
     data: {
-        token:string;
-        username: string;
-        expiration: string;
-        roles:string[];
+        token: string,
+        account: string,
+        roleID: number,
+        role: string,
+        randomPassword: boolean,
+        userID: number
     }
     succeeded: boolean;
     message: string
@@ -22,11 +24,11 @@ export const useAuth = defineStore('auth', () => {
     const authenticated = ref(false);
     const loading = ref(false);
 
-    async function login({ username, password }: UserPayloadInterface) {
-        const { data, pending, error } = await useFetchApi('/auth/login/', {
+    async function login({ account, password }: UserPayloadInterface) {
+        const { data, pending, error } = await useFetchApi('/user/login', {
             method: 'post',
             body: {
-                username,
+                account,
                 password,
             },
         });
@@ -35,13 +37,18 @@ export const useAuth = defineStore('auth', () => {
             const userinfo = data.value as LoginInfo
             const token = useCookie('token');
             token.value = userinfo.data.token;
-            const user = useCookie('user');
-            user.value = userinfo.data.username;  
+            const account = useCookie('account');
+            account.value = userinfo.data.account;
             const role = useCookie('role');
-            role.value = JSON.stringify(userinfo.data.roles) ;
-            authenticated.value = true;
+            role.value = userinfo.data.role;
+            const roleID = useCookie<number>('roleID');
+            roleID.value = userinfo.data.roleID;
+            const randomPassword = useCookie<boolean>('randomPassword');
+            randomPassword.value = userinfo.data.randomPassword;
+            const userID = useCookie<number>('userID');
+            userID.value = userinfo.data.userID;
 
-            
+            authenticated.value = true;
 
         } else if (error.value) {
             const msg = error.value.statusCode == 401 ? 'Tên đăng nhập hoặc mật khẩu không đúng' : error.value.data
@@ -50,7 +57,7 @@ export const useAuth = defineStore('auth', () => {
                 title: 'Error',
                 message: msg,
                 type: 'error',
-            })            
+            })
         }
     }
 

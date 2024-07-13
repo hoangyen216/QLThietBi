@@ -3,31 +3,22 @@
     <div class="row justify-content-center">
       <el-form ref="ruleFormRef" :model="ruleForm" label-width="155px" :rules="rules" class="demo-ruleForm form"
         status-icon>
-        <el-form-item label="Tên thiết bị" prop="ten">
-          <el-input v-model="ruleForm.ten" />
+        <el-form-item label="Tên thiết bị" prop="Descr">
+          <el-input v-model="ruleForm.deviceDescr" />
         </el-form-item>
-        <el-form-item label="Tên viết tắt" prop="tenVietTat">
-          <el-input v-model="ruleForm.tenVietTat" />
+        <el-form-item label="Tên viết tắt" prop="shortDescr">
+          <el-input v-model="ruleForm.deviceShortDescr" />
         </el-form-item>
-        <el-form-item label="Thời gian nhập kho" prop="tgnhapKho">
-          <el-date-picker v-model="ruleForm.tgnhapKho" value-format="YYYY-MM-DD" type="date" placeholder="Pick a date"
-            format="DD-MM-YYYY" style="width: 100%" />
+        <el-form-item label="Loại" prop="CategoryId">
+          <el-select v-model="ruleForm.categoryId" placeholder="Chọn loại thiết bị" style="flex:1">
+            <el-option v-for="item in Category" :key="item.categoryId" :label="item.descr" :value="item.categoryId" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="Thời gian bảo hành" prop="tgbaoHanh">
-          <el-input v-model="ruleForm.tgbaoHanh" />
-        </el-form-item>
-        <el-form-item label="Thời gian bảo dưỡng" prop="tgbaoDuong">
-          <el-input v-model="ruleForm.tgbaoDuong" />
-        </el-form-item>
-        <el-form-item label="Người nhập kho" prop="nguoiNhapKho">
-          <el-input v-model="ruleForm.nguoiNhapKho" />
-        </el-form-item>
-
         <el-form-item label="Hình ảnh">
-          <div class="avatar-uploader img" v-if="imageUrl">
+          <div class="avatar-uploader img" v-if="imageUrl!=''||ruleForm.image != ''">
             <div class="avatar img1">
-              <el-text class=" close1 close" @click="() => { imageUrl = ''; ruleForm.hinhanh = null }">x</el-text>
-              <img :src="imageUrl" class="avatar img2" />
+              <el-text class=" close1 close" @click="() => { imageUrl = ''; ruleForm.image = '' }">x</el-text>
+              <img :src="edit?ruleForm.image:imageUrl" class="avatar img2" />
             </div>
           </div>
           <el-upload v-else class="avatar-uploader" :show-file-list="false"
@@ -42,25 +33,25 @@
             </template>
           </el-upload>
         </el-form-item>
-        <el-form-item label="Tình trạng thiết bị" prop="tinhTrang">
-          <el-input v-model="ruleForm.tinhTrang" />
-        </el-form-item>
-        <el-form-item label="Số lượng" prop="desc">
-          <el-input-number v-model="ruleForm.soLuong" :min="1" :max="1000" />
-        </el-form-item>
         <el-form-item label="Mô tả chức năng" prop="desc">
-          <el-input v-model="ruleForm.moTaChucNang" type="textarea" />
+          <el-input v-model="ruleForm.descrFunction" type="textarea" />
         </el-form-item>
-        <el-form-item label="Hướng dẫn sử dụng" prop="desc">
-          <el-input v-model="ruleForm.huongDanSuDung" type="textarea" />
+        <el-form-item label="Hướng dẫn sử dụng" prop="pdf">
+          <el-upload class="upload-demo" action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" multiple>
+            <el-button>Upload File PDF</el-button>
+            <template #tip>
+              <div class="el-upload__tip">
+                files with a size less than 500KB.
+              </div>
+            </template>
+          </el-upload>
         </el-form-item>
-
       </el-form>
     </div>
   </div>
 </template>
-  
-<script lang="ts" setup >
+
+<script lang="ts" setup>
 
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules, UploadFile, UploadRawFile } from 'element-plus'
@@ -77,66 +68,37 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const route = useRoute()
-
+const Category = ref<Category[]>()
 const oldForm = ref<Device>()
 const ruleFormRef = ref<FormInstance>()
-const ruleForm = ref<Device>({
-  ten: '',
-  tenVietTat: '',
-  nguoiNhapKho: '',
-  tgnhapKho: '',
-  tgbaoHanh: '',
-  tgbaoDuong: '',
-  tinhTrang: '',
-  moTaChucNang: '',
-  huongDanSuDung: '',
-  soLuong: 0,
-  hinhanh: undefined,
-  qrcode: '',
+const ruleForm = ref({
+  categoryId: 1,
+  deviceDescr: '',
+  deviceShortDescr: '',
+  descrFunction: '',
+  image: '',
+  pdf: ''
 })
 
-
-
 const rules = reactive<FormRules<Device>>({
-  ten: [
+  descr: [
     { required: true, message: 'Vui lòng nhập tên thiết bị', trigger: 'blur' },
 
   ],
-  nguoiNhapKho: [
-    { required: true, message: 'Vui lòng nhập tên người nhập kho', trigger: 'blur' }
 
-  ],
-  tinhTrang: [
-    { required: true, message: 'Vui lòng nhập tình trạng thiết bị', trigger: 'blur' }
-
-  ],
-  tgnhapKho: [
-    {
-      type: 'date',
-      required: true,
-      message: 'Vui lòng chọn ngày',
-      trigger: 'change',
-    },
-  ],
-  tgbaoHanh: [
-  { required: true, message: 'Vui lòng nhập thời gian bảo hành', trigger: 'blur' },
-  ],
-  tgbaoDuong: [
-  { required: true, message: 'Vui lòng nhập thời gian bảo dưỡng', trigger: 'blur' },
-  ],
 })
 
 if (props.edit) {
-
-  const { data } = await useFetchApi(`/demo/find/${route.params.id}`, {
+  const { data } = await useFetchApi(`/device/getbyid/${route.params.id}`, {
     method: 'GET',
   });
   if (data.value) {
-    const programDetail = data.value as Device;
-    oldForm.value = programDetail;
-
-    ruleForm.value = programDetail
-
+    // const programDetail = data.value as Device;
+    const newData = data.value as { deviceDescr: string, deviceShortDescr: string, image: string };
+    // oldForm.value = programDetail;
+    ruleForm.value.deviceDescr = newData.deviceDescr,
+      ruleForm.value.deviceShortDescr = newData.deviceShortDescr,
+      ruleForm.value.image = newData.image
   }
 }
 
@@ -150,47 +112,84 @@ async function submit(): Promise<boolean> {
     return false;
   }
 
+  if (props.edit) {
 
-  const { error, status } = await useFetchApi(`demo/post/${props.edit ? oldForm.value?.maTb + '/' : ''}`, {
-    method: props.edit ? 'PUT' : 'POST',
-    server: false,
-    body: ruleForm,
-    watch: false
-  }, false)
-  if (status.value == 'success') {
-    return true;
-  } else if (status.value == 'error') {
-    ElNotification({
-      title: 'Error',
-      message: error.value?.data,
-      type: 'error',
-    })
-    // const msg = error.value?.statusCode == 400 ? 'Thiết bị đã có' : error.value?.data
-    // ElNotification({
-    //   title: 'Không thể thêm mới',
-    //   message: msg,
-    //   type: 'error',
-    // })
+    const { error, status } = await useFetchApi(`device/update/${route.params.id}`, {
+      method: 'POST',
+      server: false,
+      body: {
+        categoryId: ruleForm.value.categoryId,
+        descr: ruleForm.value.deviceDescr,
+        shortDescr: ruleForm.value.deviceShortDescr,
+        image: ruleForm.value.image,
+        descrFunction: ruleForm.value.descrFunction,
+        pdf: ruleForm.value.pdf
+      },
+      watch: false
+    }, false)
+    if (status.value == 'success') {
+      return true;
+    } else if (status.value == 'error') {
+      ElNotification({
+        title: 'Error',
+        message: error.value?.data,
+        type: 'error',
+      })
+      // const msg = error.value?.statusCode == 400 ? 'Thiết bị đã có' : error.value?.data
+      // ElNotification({
+      //   title: 'Không thể thêm mới',
+      //   message: msg,
+      //   type: 'error',
+      // })
+    }
   }
+  else {
+    const { error, status } = await useFetchApi(`device/create`, {
+      method: 'POST',
+      server: false,
+      body: {
+        categoryId: ruleForm.value.categoryId,
+        descr: ruleForm.value.deviceDescr,
+        shortDescr: ruleForm.value.deviceShortDescr,
+        image: ruleForm.value.image,
+        descrFunction: ruleForm.value.descrFunction,
+        pdf: ruleForm.value.pdf
+      },
+      watch: false
+    }, false)
+    if (status.value == 'success') {
+      return true;
+    } else if (status.value == 'error') {
+      ElNotification({
+        title: 'Error',
+        message: error.value?.data,
+        type: 'error',
+      })
+      // const msg = error.value?.statusCode == 400 ? 'Thiết bị đã có' : error.value?.data
+      // ElNotification({
+      //   title: 'Không thể thêm mới',
+      //   message: msg,
+      //   type: 'error',
+      // })
+    }
+
+  }
+
   return false;
 }
 
-
 function handleSuccessUpload(file: UploadFile) {
-
   var reader = new FileReader();
   reader.readAsDataURL(file.raw!);
   reader.onload = function () {
     console.log(reader.result);
-    ruleForm.value.hinhanh = reader.result;
+    ruleForm.value.image = reader.result as string;
     imageUrl.value = reader.result as any;
   };
   reader.onerror = function (error) {
     console.log('Error: ', error);
   };
-
 }
-
 
 function beforeAvatarUpload(rawFile: UploadRawFile): boolean {
   const formats = ['image/jpeg', 'image/png']
@@ -204,23 +203,23 @@ function beforeAvatarUpload(rawFile: UploadRawFile): boolean {
   return true
 }
 
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
+const { data } = await useFetchApi('/category/getall', {
+  method: 'GET',
+  query: {
+    page: 1,
+    pageSize: 1000
+  }
+});
+if (data.value) {
+  const newData = data.value as { itemCount: number, data: any };
+  Category.value = newData?.data as Category[];
 }
 
-const options = Array.from({ length: 10000 }).map((_, idx) => ({
-  value: `${idx + 1}`,
-  label: `${idx + 1}`,
-}))
 
-const num = ref(1)
-const handleChange = (value: number) => {
-  console.log(value)
-}
+
 </script>
 
-<style >
+<style>
 .img {
   border-radius: 0.5rem;
   overflow: hidden;
@@ -250,7 +249,7 @@ const handleChange = (value: number) => {
 }
 
 .avatar-uploader .avatar {
-  width: 400px;
+  width: 198px;
   height: 178px;
   display: block;
 
@@ -272,7 +271,7 @@ const handleChange = (value: number) => {
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 400px;
+  width: 198px;
   height: 178px;
   text-align: center;
 }
@@ -296,6 +295,3 @@ const handleChange = (value: number) => {
   }
 }
 </style>
-
-
-

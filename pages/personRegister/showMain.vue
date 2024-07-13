@@ -1,14 +1,6 @@
 <template>
-    <el-card shadow="never">
+    <el-card shadow="never"  style="min-height: 100vh">
         <el-space :wrap="true" class="mb-2">
-
-            <NuxtLink to="/personRegister/register-device" :underline="false">
-                <el-button type="primary">
-                    <Icon name="mdi:plus" class="mr-2" size="20" />
-                    Đăng ký mượn thiết bị
-                </el-button>
-            </NuxtLink>
-
         </el-space>
         <client-only>
             <el-table  v-loading="pending" ref="multipleTableRef" :data="tableData"
@@ -79,7 +71,7 @@
                         </el-row>
                     </template>
                 </el-table-column>
-                <el-table-column type="index" width="50" label="STT" />>
+                <!-- <el-table-column type="index" width="50" label="STT" />> -->
                 <el-table-column prop="maPdk" label="Mã PDK" />
                 <el-table-column prop="ngayMuon" label="Ngày Mượn">
                     <template #default="scope">
@@ -115,8 +107,8 @@
 
             </el-table>
         </client-only>
-        <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 30]" :background=true
-            layout="sizes, prev, pager, next" :total="total" style="margin-top: 25px" />
+        <el-pagination style=" bottom: 18px; position: absolute;" v-model:current-page="page" v-model:page-size="pageSize"  :background=true
+            layout=" prev, pager, next" :total="total"/>
     </el-card>
     <client-only>
         <el-dialog v-model="dialogTableVisible" :modal="false" :append-to-body="true">
@@ -180,16 +172,11 @@ function showTypeTag(value: string) {
     else
         return '';
 }
-const user = useCookie('user')
+const user = useCookie('account')
 
-const { data, pending } = useFetchApi('pdk/findByUser', {
+const { data, pending } = useFetchApi('/regist/getbyuser/1', {
     method: 'GET',
     server: false,
-    query: {
-        page: page,
-        pageSize: pageSize,
-        username: user.value
-    },
     watch: [
         page,
         pageSize,
@@ -206,12 +193,6 @@ watch(data, (x) => {
     total.value = newData.itemCount;
 
 })
-
-if (data.value) {
-    // tableData.value = data.value as PDK
-    console.log("danh sach phieu dang ky")
-    console.log("ds", data.value)
-}
 
 function doubleClickHandler(row: any, column: any, event: any) {
     dialogModel.value = row;

@@ -1,5 +1,5 @@
 <template>
-    <el-card shadow="never">
+    <el-card shadow="never"  style="height: 88vh">
 
 
         <el-table ref="multipleTableRef" :data="tableData" style="width: 100%">
@@ -33,8 +33,8 @@
             </el-table-column>
         </el-table>
 
-        <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 30]" :background=true
-            layout="sizes, prev, pager, next" :total="total" style="margin-top: 25px" />
+        <el-pagination style=" bottom: 18px; position: absolute;" v-model:current-page="page" v-model:page-size="pageSize"  :background=true
+            layout="prev, pager, next" :total="total"  />
     </el-card>
 
     <el-dialog style="height: 285px;" v-model="dialogFormVisible" title="Thiết lập quyền truy cập" :before-close="handleClose">

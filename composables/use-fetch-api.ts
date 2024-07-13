@@ -12,6 +12,7 @@ export const useFetchApi = (url: string, options?: UseFetchOptions<object>, noCT
         async onRequest({ request, options }) {
             
             const headers = new Headers(options.headers);
+            headers.set('ngrok-skip-browser-warning', '6240');
             if (!noCT) {
                 headers.set('Content-Type', 'application/json');
             }
