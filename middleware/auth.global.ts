@@ -16,7 +16,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const toPage = to?.fullPath || ''
     console.log("fullPath", toPage);
 
-    // if(token.value && )
+    
 
 
     //if token doesn't exist redirect to log in
@@ -27,6 +27,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
         }
         return
     }
+
+    // if(token.value && )
 
     if (role.value == 'User') {
         const userPageAllowed = [

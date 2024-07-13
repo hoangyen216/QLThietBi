@@ -17,7 +17,7 @@
                     <el-input style="min-height: 64px;" v-model="dynamicValidateForm.notice" type="textarea" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm()">Đăng Ký Mượn</el-button>
+                    <el-button type="primary" @click="submitForm(formRef)">Đăng Ký Mượn</el-button>
                     <!-- <el-button @click="resetForm(formRef)">Xóa Phiếu</el-button> -->
                 </el-form-item>
             </el-form>
@@ -82,6 +82,19 @@ const validateNgayTra = (rule: any, value: any, callback: any) => {
         callback();
     }
 }
+
+const currentDate = new Date();
+const validateNgayMuon = (rule: any, value: any, callback: any) => {
+    if (value < currentDate) {
+        callback(new Error('Ngày trả phải lớn hơn ngày hiện tại'));
+    } else {
+        callback();
+    }
+}
+
+console.log(currentDate);
+
+
 const rules = reactive({
     returnDate: [
         { validator: validateNgayTra, trigger: 'blur' },
@@ -92,6 +105,7 @@ const rules = reactive({
         },
     ],
     borrowDate: [
+        // { validator: validateNgayMuon, trigger: 'blur' },
         {
             required: true,
             message: 'Vui lòng chọn ngày mượn ',
@@ -99,13 +113,13 @@ const rules = reactive({
         },
     ]
 })
-async function submitForm() {
+async function submitForm(ruleformref: FormInstance | undefined) {
 
     const detailDevice = store.cartItems.map(({ deviceID, quantity, warehouseID }) => ({ deviceID, quantity, warehouseID }));
-    if(!detailDevice) return 
-    if (!formRef.value) return false;
+    if (!detailDevice) return
+    if (!ruleformref) return false;
     try {
-        if (! await formRef.value.validate((valid, fields) => {
+        if (! await ruleformref.validate((valid, fields) => {
             return valid;
         })) return false;
     } catch (error) {

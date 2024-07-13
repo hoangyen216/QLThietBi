@@ -78,7 +78,7 @@
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="registDate" label="Thời Gian Ghi Nhận">
+                <el-table-column prop="registDate" label="Thời Gian Ghi Nhận" sortable>
                     <template #default="scope">
                         <el-text class="mx-1">{{ datetimeFormat1(scope.row.registDate) }} </el-text>
                     </template>
@@ -161,14 +161,14 @@
             <div v-if="formDuyetDangKy.trangThai.includes('Đã Trả')">
                 <el-table :data="detailRegistData">
                     <!-- <el-table-column prop="registId" label="RegistId" /> -->
-                    <el-table-column prop="deviceId" label="DeviceId" />
+                    <el-table-column prop="deviceId" label="DeviceID" />
                     <el-table-column prop="itemId" label="ItemId" />
-                    <el-table-column prop="beforeStatus" label="beforeStatus" />
-                    <el-table-column prop="afterStatus" label="AfterStatus" width="240px">
+                    <el-table-column prop="beforeStatus" label="Trang thái trước" />
+                    <el-table-column prop="afterStatus" label="Trạng thái sau" width="240px">
                         <template #default="scope">
                             <!-- <el-input v-model="scope.row.afterStatus" style="width: 200px"
                                 placeholder="tình trạng thiết bị" /> -->
-                            <el-select v-model="scope.row.afterStatus" placeholder="AfterStatus" size="large"
+                            <el-select v-model="scope.row.afterStatus" placeholder="Trạng thái sau" size="large"
                                 style="width: 200px">
                                 <el-option v-for="item in Status" :key="item.value" :label="item.value"
                                     :value="item.value" />

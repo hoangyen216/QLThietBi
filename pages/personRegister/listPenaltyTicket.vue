@@ -13,7 +13,7 @@
                         <el-button size="large" style="padding: 0;" text >
                             <el-tag style="width: 97px;" size="large" :type="showTypeTag(scope.row.status)"
                                 disable-transitions>{{
-                                    scope.row.status?"Đã Trả":"Chưa Trả"
+                                    scope.row.status
                                 }}</el-tag>
                         </el-button>
                     </template>

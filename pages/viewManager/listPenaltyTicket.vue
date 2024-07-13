@@ -10,8 +10,7 @@
                     { text: 'Đã Trả', value: 'Đã Trả' },
                 ]" :filter-method="filterTag">
                     <template #default="scope">
-                        <el-button size="large" style="padding: 0;" text
-                            @click="xuLyTrangThai(scope.row)">
+                        <el-button size="large" style="padding: 0;" text >
                             <el-tag style="width: 97px;" size="large" :type="showTypeTag(scope.row.status)"
                                 disable-transitions>{{
                                     scope.row.status
@@ -31,25 +30,7 @@
         <el-pagination style=" bottom: 2px; position: absolute;" v-model:current-page="page"
             v-model:page-size="pageSize" :background=true layout=" prev, pager, next" :total="total" />
     </el-card>
-    <client-only>
-        <el-dialog v-model="dialogFormVisible" title="Xác Nhận">
-            <el-form>
-                <el-form-item label="Trạng Thái" :label-width="formLabelWidth">
-                    <el-select v-model="status1" placeholder="Chọn trạng thái">
-                        <el-option v-for="item in currentOper" :label="item" :value="item" />
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">Xóa</el-button>
-                    <el-button type="primary" @click=" formSubmitPenalty()">
-                        Xác nhận
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
-    </client-only>
+
     <el-dialog v-model="dialogPenalty" width="700px">
         <!-- {{ dataPenalty }} -->
         <el-table :data="dataPenaltyDetail" show-summary>
@@ -62,6 +43,9 @@
 </template>
 <script lang="ts" setup>
 useHeadSafe({ title: 'Danh sách Phiếu Phạt' })
+// definePageMeta({
+//     layout: ''
+// })
 import { reactive, ref } from 'vue'
 const page = ref(1);
 const formLabelWidth = '140px'
@@ -71,57 +55,13 @@ const reload = ref(0);
 const dataPenalty = ref()
 const dialogPenalty = ref(false)
 const dataPenaltyDetail = ref<Penalty[]>([])
-const dialogFormVisible = ref(false)
-const currentOper = ref<string[]>([])
-const status1 = ref('')
-const penaltyId = ref('')
 
-const operations = new Map<string, string[]>(
-    [
-        ['Chưa Trả', ['Đã Trả']],
-    ]
-)
-
-async function xuLyTrangThai(row: any) {
-    if (row.status == "Đã Trả") {
-        ElMessage({
-            message: 'Từ chối yêu cầu thay đổi trạng thái',
-        })
-
-        return;
-    }
-    dialogFormVisible.value = true
-    currentOper.value = operations.get(row.status) ?? [];
-    status1.value = row.status
-    penaltyId.value = row.penaltyId
-
-}
 
 const filterTag = (value: string, row: any) => {
     return row.status === value
 }
 
-async function formSubmitPenalty() {
-    if (status1.value == '') return
-    const { status, error } = await useFetchApi(`/penalty/updateStatus/${penaltyId.value}&${status1.value == "Đã Trả" ? true : false}`, {
-        method: 'POST',
-    })
-    if (status.value == 'success') {
-        reload.value++;
-        ElNotification({
-            title: 'Đã xác nhận',
-            type: 'success',
-        })
-    } else if (status.value == 'error') {
-        ElNotification({
-            title: 'Error',
-            message: error.value?.data,
-            type: 'error',
-        })
-    }
 
-    dialogFormVisible.value = false
-}
 
 function showTypeTag(value: string) {
     if (value == 'Đã Trả')
@@ -132,7 +72,7 @@ function showTypeTag(value: string) {
         return '';
 }
 
-const { data, pending } = useFetchApi('/penalty/getall', {
+const { data, pending } = useFetchApi(`/penalty/getall`, {
     method: 'GET',
     server: false,
     query: {
@@ -152,6 +92,7 @@ watch(data, (x) => {
     dataPenalty.value = newData?.data;
     total.value = newData.itemCount;
 })
+
 async function getDetailPenalty(registId: number) {
     const { data } = await useFetchApi(`/penalty/getDetail/${registId}&1`, {
         method: 'GET',
