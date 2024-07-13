@@ -23,7 +23,7 @@
 
         <div class="overlay">
           <button type="button" class="btn btn-light btn-lg" @click="store.add(item.deviceID, item)">Add +</button>
-          <NuxtLink :to="`/details/${item.deviceID}`">
+          <NuxtLink :to="`/Products/${item.deviceID}`">
             <button type="button" class="btn btn-light btn-lg">Info</button>
           </NuxtLink>
         </div>

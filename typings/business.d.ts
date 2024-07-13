@@ -146,4 +146,8 @@ interface Penalty{
     descr: string,
     fine: number,
 }
+interface BorrowRecord {
+    deviceRegist: DeviceRegistration;
+    listDetails: ListDetail[];
+}
 

@@ -35,7 +35,7 @@
                 </el-table-column>
                 <el-table-column label="Tác Vụ" width="170">
                     <template #default="scope">
-                        <el-button type="primary" @click="detailRegist(scope.row.registId); dialogTableVisible = true">
+                        <el-button type="primary" @click="detailRegist(scope.row.registId); dialogRegistDetail = true">
                             <Icon name="pajamas:details-block" height="18" width="20" style="color: white" />
                         </el-button>
                     </template>
@@ -44,14 +44,28 @@
         </client-only>
         <el-pagination style=" bottom: 2px; position: absolute;" v-model:current-page="page"
             v-model:page-size="pageSize" :background=true layout=" prev, pager, next" :total="total" />
+        <el-dialog v-model="dialogRegistDetail" title="Chi Tiết Phiếu Đăng ký ">
+            <h4 style="text-align: center;">Chi tiết phiếu đăng ký </h4>
+            <!-- {{  listDetailsArray}} -->
+            <el-table :data="listDetailsArray">
+                <el-table-column prop="deviceId" label="DeviceId" />
+                <el-table-column prop="borrowQuantity" label="BorrowQuantity" />
+                <el-table-column prop="confirmQuantity" label="ConfirmQuantity" />
+            </el-table>    
+        </el-dialog>
     </el-card>
 </template>
 <script lang="ts" setup>
 useHeadSafe({ title: 'Danh sách Phiếu Đăng Ký' })
+definePageMeta({
+    layout: 'viewpersonregister'
+})
 import { reactive, ref } from 'vue'
+
 
 const dialogFormVisible = ref(false)
 const dialogTableVisible = ref(false)
+const dialogRegistDetail = ref(false)
 const formLabelWidth = '140px'
 const page = ref(1);
 const pageSize = ref(10);
@@ -59,8 +73,9 @@ const total = ref(0);
 const reload = ref(0);
 const dialogModel = ref<PDK>()
 const user = useCookie('account')
-const tableData = ref<PDK[]>();
-
+const tableData = ref();
+const detailRegistData = ref<ListDetail[]>()
+const listDetailsArray = ref()
 
 const filterTag = (value: string, row: PDK) => {
     return row.status === value
@@ -74,7 +89,7 @@ function showTypeTag(value: string) {
         return '';
 }
 
-const { data, pending } = useFetchApi(`/regist/getbyuser/${useCookie('userID')}`, {
+const { data, pending } = useFetchApi(`/regist/getbyuser/${useCookie('userID').value}`, {
     method: 'GET',
     server: false,
     query: {
@@ -94,16 +109,29 @@ watch(data, (x) => {
     tableData.value = newData?.data;
     total.value = newData.itemCount;
 })
-
+function listDeviceRegist(data: BorrowRecord[]) {
+    const details: ListDetail[] = []
+    for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        details.push(...element.listDetails);
+    }
+    return details
+}
+function listDeviceRegistDemo(data: BorrowRecord[]) {
+    const details: DeviceRegistration[] = data.map(item => item.deviceRegist);
+    return details;
+}
 async function detailRegist(registId: number) {
-    const { data } = await useFetchApi(`/regist/`, {
+    const { data } = await useFetchApi(`/regist/listDeviceRegist/${registId}`, {
         method: 'GET',
     });
     if (data.value) {
-
+        detailRegistData.value = listDeviceRegist(data.value as BorrowRecord[])
+        // listDetailsArray.value = (data.value as BorrowRecord[])[0]
+        listDetailsArray.value = listDeviceRegistDemo(data.value as BorrowRecord[])
+        // console.log(demo);
     }
 }
-
 
 </script>
 

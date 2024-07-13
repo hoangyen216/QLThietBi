@@ -1,6 +1,10 @@
 import { storeToRefs } from 'pinia';
 import { useAuth } from '~/stores/auth';
 
+function isMatchURL(to: string, match: string) {
+    return to.substring(0, match.length).includes(match)
+}
+
 export default defineNuxtRouteMiddleware((to, from) => {
     const { authenticated } = storeToRefs(useAuth());
     const token = useCookie('token');
@@ -9,27 +13,30 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (token.value) {
         authenticated.value = true;
     }
+    const toPage = to?.fullPath || ''
+    console.log("fullPath", toPage);
 
-    // if token exists and url is /login redirect to homepage
-    if (token.value && to?.name === 'login1' && (role.value == "Admin" || role.value == "Manager")) {
-        return navigateTo('/');
-    }
-
-    if (token.value && to?.name === 'login1' && role.value == "User") {
-        return navigateTo('/Products');
-    }
-
-    // if (to.meta.requiresAuth && !userRole) {
-    //     return navigateTo('/login'); // Redirect to login page
-    // }
-
-    if (!requiredRoles) {
-        return navigateTo('/unauthorized'); // Redirect to unauthorized page
-    }
 
     //if token doesn't exist redirect to log in
-    if (!token.value && to?.name !== 'login1' && to?.name !== 'register2') {
-        abortNavigation();
-        return navigateTo('/login1');
+    if (!token.value) {
+        if (!isMatchURL(toPage, '/login1')) {
+            abortNavigation();
+            return navigateTo('/login1');
+        }
+        return
     }
+
+    if (role.value == 'User') {
+        const userPageAllowed = [
+            '/personRegister',
+            '/Products',
+            '/Cart',
+        ]
+        const p = userPageAllowed[1]
+        if (!userPageAllowed.some((v) => isMatchURL(toPage, v)) || isMatchURL(toPage, '/login1')) {
+            abortNavigation();
+            return navigateTo('/Products');
+        }
+    }
+
 });

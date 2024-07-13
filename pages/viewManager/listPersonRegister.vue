@@ -244,10 +244,7 @@ interface Warehouse {
 
 //interface detail regist
 
-interface BorrowRecord {
-    deviceRegist: DeviceRegistration;
-    listDetails: ListDetail[];
-}
+
 //End interface detail regist
 
 
@@ -357,7 +354,7 @@ async function formSubmitDuyetDangKy() {
         server: false,
         body: {
             registID: formDuyetDangKy.maPdk,
-            managerID: 1,
+            managerID: useCookie('ID'),
             status: formDuyetDangKy.trangThai,
             reason: formDuyetDangKy.lyDo
         },
@@ -483,6 +480,7 @@ async function submitMoneyFine() {
             title: 'Xác nhận thành công',
             type: 'success',
         })
+        dialogPenalty.value = false
     } else if (status.value == 'error') {
         ElNotification({
             title: 'Error',
@@ -493,7 +491,7 @@ async function submitMoneyFine() {
 }
 
 async function getDetailPenalty(registId: number) {
-    const { data } = await useFetchApi(`/penalty/getDetail/${registId}`, {
+    const { data } = await useFetchApi(`/penalty/getDetail/${registId}&0`, {
         method: 'GET',
     });
     if (data.value) {

@@ -108,7 +108,7 @@ const formAddAccount = reactive({
     name: '',
     phoneNumber: '',
     email: '',
-    roleId: '',
+    roleId: 0,
     citizenId: ''
 })
 

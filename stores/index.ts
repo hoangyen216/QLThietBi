@@ -129,6 +129,7 @@ export const useMainStore = defineStore("main", {
     },
     removeAll() {
       localStorage.removeItem(CART_STORAGE);
+      this.contents = {}
     },
 
   },

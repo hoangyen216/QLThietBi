@@ -73,7 +73,7 @@
                                         <span style="padding-left: 5px;">
                                             Quản Lý Thiết Bị</span>
                                     </a>
-                                    <a href="/personRegister/showMain"
+                                    <a href="/Products"
                                         class="list-group-item border-end-0 d-inline-block text-truncate"
                                         data-bs-parent="#sidebar">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"

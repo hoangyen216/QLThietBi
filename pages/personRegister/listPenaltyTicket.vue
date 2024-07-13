@@ -13,7 +13,7 @@
                         <el-button size="large" style="padding: 0;" text >
                             <el-tag style="width: 97px;" size="large" :type="showTypeTag(scope.row.status)"
                                 disable-transitions>{{
-                                    scope.row.status
+                                    scope.row.status?"Đã Trả":"Chưa Trả"
                                 }}</el-tag>
                         </el-button>
                     </template>
@@ -42,7 +42,10 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-useHeadSafe({ title: 'Danh sách Phiếu Đăng Ký' })
+useHeadSafe({ title: 'Danh sách Phiếu Phạt' })
+definePageMeta({
+    layout: 'viewpersonregister'
+})
 import { reactive, ref } from 'vue'
 const page = ref(1);
 const formLabelWidth = '140px'
@@ -69,7 +72,7 @@ function showTypeTag(value: string) {
         return '';
 }
 
-const { data, pending } = useFetchApi('/penalty/getall', {
+const { data, pending } = useFetchApi(`/penalty/getByUserID/${useCookie('userID').value}`, {
     method: 'GET',
     server: false,
     query: {
@@ -89,8 +92,9 @@ watch(data, (x) => {
     dataPenalty.value = newData?.data;
     total.value = newData.itemCount;
 })
+
 async function getDetailPenalty(registId: number) {
-    const { data } = await useFetchApi(`/penalty/getDetail/${registId}`, {
+    const { data } = await useFetchApi(`/penalty/getDetail/${registId}&1`, {
         method: 'GET',
     });
     if (data.value) {

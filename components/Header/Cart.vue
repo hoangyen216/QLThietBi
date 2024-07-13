@@ -15,7 +15,7 @@
           <CartTotal />
         </div> -->
       </div>
-      <el-button style="margin:auto;display: flex;" type="primary"  @click="navigateTo(`/Cart`)">CHI TIẾT GIỎ HÀNG</el-button>
+      <el-button style="margin:auto;display: flex;" type="primary"  @click="navigateTo('/Products/Cart')">CHI TIẾT GIỎ HÀNG</el-button>
     </div>
 
     <div :class="['modal', cart.isOpen ? '' : 'off']" @click="$emit('closeCart')"></div>

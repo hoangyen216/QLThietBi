@@ -8,16 +8,16 @@
 
 const navLinks = [
   {
-    name: 'Home',
-    Link: '/'
+    name: 'Trang Chủ',
+    Link: '/Products'
   },
   {
-    name: 'Products',
-    Link: '/products'
+    name: 'Phiếu Đăng Ký',
+    Link: '/personRegister/listRegistTicket'
   },
   {
-    name: 'Contact',
-    Link: '/contact'
+    name: 'Phiếu Phạt',
+    Link: '/personRegister/listPenaltyTicket'
   }
 ];
 </script>
